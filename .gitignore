@@ -1,1 +1,23 @@
+# Dependencias
+node_modules/
 
+# Builds
+dist/
+build/
+
+# Entornos
+.env
+
+# Logs
+*.log
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Visual Studio / .NET
+bin/
+obj/
+
+# PDFs (si no quieres versionarlos)
+docs/*.pdf
