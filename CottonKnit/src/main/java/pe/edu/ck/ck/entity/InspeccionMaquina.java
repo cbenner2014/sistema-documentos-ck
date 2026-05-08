@@ -25,8 +25,11 @@ public class InspeccionMaquina {
     @JsonProperty("linea")
     private String linea;
     
-    @JsonProperty("modelo")
-    private String modelo;
+    @JsonProperty("modeloCabezal")
+    private String modeloCabezal;
+
+    @JsonProperty("modeloMotor")
+    private String modeloMotor;
     
     @JsonProperty("serieCabezal")
     private String serieCabezal;
@@ -39,6 +42,9 @@ public class InspeccionMaquina {
     
     @JsonProperty("codigoMecanico")
     private String codigoMecanico;
+    
+    @Column(name = "batch_id")
+    private String batchId;
     
     @Column(columnDefinition = "TEXT")
     private String observaciones;

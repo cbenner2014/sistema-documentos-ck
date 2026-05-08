@@ -37,4 +37,7 @@ public class ReporteMantenimiento {
     @Column(name = "hora_termino")
     @JsonProperty("horaTermino")
     private LocalTime horaTermino;
+
+    @Column(name = "batch_id")
+    private String batchId;
 }

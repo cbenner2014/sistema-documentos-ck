@@ -9,6 +9,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LucideLayoutDashboard, LucidePlus, LucideSearch, LucideFileText, LucideSave } from '@lucide/angular';
 import { StockAgujas } from '../../../models/entities.models';
 import { ApiService } from '../../../services/api.service';
+import { PdfService } from '../../../services/pdf.service';
+import { LucideDownload } from '@lucide/angular';
 
 @Component({
   selector: 'app-stock-agujas-list',
@@ -24,7 +26,8 @@ import { ApiService } from '../../../services/api.service';
     LucidePlus, 
     LucideSearch, 
     LucideFileText,
-    LucideSave
+    LucideSave,
+    LucideDownload
   ],
   template: `
     <div class="page-container">
@@ -37,6 +40,10 @@ import { ApiService } from '../../../services/api.service';
           <button mat-flat-button class="premium-btn" (click)="toggleForm()">
             <svg lucidePlus></svg>
             {{ showForm ? 'Cerrar Registro' : 'Nuevo Registro' }}
+          </button>
+          <button mat-stroked-button class="ml-2 export-btn" (click)="exportPDF()" [disabled]="dataSource.length === 0">
+            <svg lucideDownload class="mr-2 h-4 w-4"></svg>
+            Exportar Stock (PDF)
           </button>
         </div>
       </div>
@@ -171,6 +178,7 @@ import { ApiService } from '../../../services/api.service';
     .total-cell { font-weight: 800; color: #4f46e5; }
     
     .premium-btn { border-radius: 12px !important; padding: 0 20px !important; height: 48px !important; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); font-weight: 600; color: white !important;}
+    .export-btn { border-radius: 12px !important; height: 48px !important; border: 2px solid #4f46e5 !important; color: #4f46e5 !important; font-weight: 600; margin-left: 10px; }
     .save-btn { background: #059669 !important; color: white !important; font-weight: 600; }
     .save-btn:disabled { background: #94a3b8 !important; }
   `]
@@ -194,6 +202,7 @@ export class StockAgujasListComponent implements OnInit {
 
   constructor(
     private apiService: ApiService, 
+    private pdfService: PdfService,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
   ) {}
@@ -263,5 +272,9 @@ export class StockAgujasListComponent implements OnInit {
       x.cliente?.toLowerCase().includes(val) || 
       x.linea?.toLowerCase().includes(val)
     );
+  }
+
+  exportPDF() {
+    this.pdfService.generateStockPDF(this.dataSource);
   }
 }

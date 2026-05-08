@@ -20,6 +20,11 @@ public class MantenimientoController {
         return ResponseEntity.ok(service.registrar(reporte));
     }
 
+    @PostMapping("/batch")
+    public ResponseEntity<List<ReporteMantenimiento>> crearLote(@RequestBody List<ReporteMantenimiento> reportes) {
+        return ResponseEntity.ok(service.registrarLote(reportes));
+    }
+
     @GetMapping
     public ResponseEntity<List<ReporteMantenimiento>> listar() {
         return ResponseEntity.ok(service.listarTodo());
@@ -28,5 +33,11 @@ public class MantenimientoController {
     @GetMapping("/maquina/{id}")
     public ResponseEntity<List<ReporteMantenimiento>> porMaquina(@PathVariable String id) {
         return ResponseEntity.ok(service.listarPorMaquina(id));
+    }
+
+    @DeleteMapping("/batch/{batchId}")
+    public ResponseEntity<Void> eliminarPorLote(@PathVariable String batchId) {
+        service.eliminarPorLote(batchId);
+        return ResponseEntity.ok().build();
     }
 }

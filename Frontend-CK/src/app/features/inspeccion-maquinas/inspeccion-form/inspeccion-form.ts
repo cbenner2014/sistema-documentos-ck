@@ -5,9 +5,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { LucideLayoutDashboard, LucideSave } from '@lucide/angular';
 import { ApiService } from '../../../services/api.service';
+import { PdfService } from '../../../services/pdf.service';
 import { Router } from '@angular/router';
+import { LucideCheckCircle, LucideZap, LucideSave } from '@lucide/angular';
 
 interface InspectionItem {
   name: string;
@@ -18,7 +19,7 @@ interface InspectionItem {
 @Component({
   selector: 'app-inspeccion-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatRadioModule, MatSnackBarModule, LucideSave],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatRadioModule, MatSnackBarModule, LucideSave, LucideCheckCircle, LucideZap],
   template: `
     <div class="page-container">
       <header class="page-header justify-between">
@@ -26,51 +27,74 @@ interface InspectionItem {
           <h1 class="gradient-text">Inspección de Máquinas de Confección</h1>
           <p class="subtitle">IND-MEC-01 | Control de Cabezales, Motores y Mantenimiento</p>
         </div>
-        <div class="header-actions">
-           <button mat-flat-button class="save-btn" (click)="save()">
+        <div class="header-actions flex gap-2">
+           <button mat-stroked-button class="autofill-btn" (click)="autofillOK()">
+             <svg lucideZap class="w-4 h-4 mr-2"></svg>
+             Autocompletar TODO (OK)
+           </button>
+           <button mat-flat-button class="save-btn" (click)="save(false)">
              <svg lucideSave></svg>
-             Guardar Inspección
+             Guardar
+           </button>
+           <button mat-flat-button class="premium-btn" (click)="save(true)">
+             <svg lucideCheckCircle class="w-4 h-4 mr-2"></svg>
+             Guardar y Exportar PDF
            </button>
         </div>
       </header>
 
       <div class="header-data glass-card">
-        <div class="data-grid">
-           <div class="field">
-             <label>Fecha</label>
-             <input type="date" [(ngModel)]="model.fecha">
+        <div class="data-grid-3">
+           <!-- Column 1 -->
+           <div class="col-section">
+             <div class="field">
+               <label>Fecha</label>
+               <input type="date" [(ngModel)]="model.fecha">
+             </div>
+             <div class="field">
+               <label>Código Máquina</label>
+               <input type="text" placeholder="Ej: RY-203" [(ngModel)]="model.codigoMaquina">
+             </div>
+             <div class="field">
+               <label>Modelo (Cabezal)</label>
+               <input type="text" [(ngModel)]="model.modeloCabezal">
+             </div>
+             <div class="field">
+               <label>Serie Cabezal</label>
+               <input type="text" [(ngModel)]="model.serieCabezal">
+             </div>
            </div>
-           <div class="field">
-             <label>Código Máquina</label>
-             <input type="text" placeholder="Ej: RY-203" [(ngModel)]="model.codigoMaquina">
+
+           <!-- Column 2 -->
+           <div class="col-section pt-10">
+             <div class="field">
+               <label>Marca/Motor</label>
+               <input type="text" [(ngModel)]="model.marcaMotor">
+             </div>
+             <div class="field">
+               <label>Modelo (Motor)</label>
+               <input type="text" [(ngModel)]="model.modeloMotor">
+             </div>
+             <div class="field">
+               <label>Serie Motor</label>
+               <input type="text" [(ngModel)]="model.serieMotor">
+             </div>
            </div>
-           <div class="field">
-             <label>Marca/Motor</label>
-             <input type="text" [(ngModel)]="model.marcaMotor">
-           </div>
-           <div class="field">
-             <label>Línea</label>
-             <input type="text" [(ngModel)]="model.linea">
-           </div>
-           <div class="field">
-             <label>Modelo</label>
-             <input type="text" [(ngModel)]="model.modelo">
-           </div>
-           <div class="field">
-             <label>Mecánico</label>
-             <input type="text" [(ngModel)]="model.mecanico">
-           </div>
-           <div class="field">
-             <label>Serie Cabezal</label>
-             <input type="text" [(ngModel)]="model.serieCabezal">
-           </div>
-           <div class="field">
-             <label>Serie Motor</label>
-             <input type="text" [(ngModel)]="model.serieMotor">
-           </div>
-           <div class="field">
-             <label>Código Mecánico</label>
-             <input type="text" [(ngModel)]="model.codigoMecanico">
+
+           <!-- Column 3 -->
+           <div class="col-section pt-10">
+             <div class="field">
+               <label>Línea</label>
+               <input type="text" [(ngModel)]="model.linea">
+             </div>
+             <div class="field">
+               <label>Mecánico</label>
+               <input type="text" [(ngModel)]="model.mecanico">
+             </div>
+             <div class="field">
+               <label>Código Mecánico</label>
+               <input type="text" [(ngModel)]="model.codigoMecanico">
+             </div>
            </div>
         </div>
       </div>
@@ -171,7 +195,9 @@ interface InspectionItem {
   styles: [`
     .page-container { display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; max-height: calc(100vh - 40px); padding: 1.5rem; }
     .header-data { padding: 1.5rem; }
-    .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .data-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+    .col-section { display: flex; flex-direction: column; gap: 1rem; }
+    .pt-10 { padding-top: 38px; } /* To align with the first row after 'Fecha' */
     .field { display: flex; flex-direction: column; gap: 4px; }
     .field label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
     .field input { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 12px; font-size: 0.9rem; }
@@ -194,9 +220,13 @@ interface InspectionItem {
     .check-box-wrapper { padding: 10px; border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; }
 
     .mt-6 { margin-top: 1.5rem; }
-    .save-btn { background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important; color: white !important; border-radius: 12px !important; height: 50px !important; padding: 0 25px !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); font-weight: 600; }
-    .save-btn svg { width: 22px; height: 22px; margin-right: 10px; }
+    .save-btn { background: #64748b !important; color: white !important; border-radius: 12px !important; height: 50px !important; padding: 0 20px !important; font-weight: 600; }
+    .premium-btn { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important; color: white !important; border-radius: 12px !important; height: 50px !important; padding: 0 25px !important; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4); font-weight: 600; }
+    .autofill-btn { border: 2px solid #eab308 !important; color: #a16207 !important; border-radius: 12px !important; height: 50px !important; font-weight: 700; background: #fefce8 !important; }
+    .save-btn svg, .premium-btn svg { width: 22px; height: 22px; margin-right: 10px; }
     .center { text-align: center; }
+    .flex { display: flex; }
+    .gap-2 { gap: 0.5rem; }
   `]
 })
 export class InspeccionFormComponent {
@@ -206,7 +236,8 @@ export class InspeccionFormComponent {
     codigoMaquina: '',
     marcaMotor: '',
     linea: '',
-    modelo: '',
+    modeloCabezal: '',
+    modeloMotor: '',
     mecanico: '',
     serieCabezal: '',
     serieMotor: '',
@@ -251,9 +282,23 @@ export class InspeccionFormComponent {
     { name: 'Otros', status: null, obs: '' },
   ];
 
-  constructor(private apiService: ApiService, private snackBar: MatSnackBar, private router: Router) {}
+  constructor(
+    private apiService: ApiService, 
+    private pdfService: PdfService,
+    private snackBar: MatSnackBar, 
+    private router: Router
+  ) {}
 
-  save() {
+  autofillOK() {
+    this.cabezales.forEach(i => i.status = 'OK');
+    this.aceite.forEach(i => i.status = 'OK');
+    this.motores.forEach(i => i.status = 'OK');
+    this.model.tornillosStatus = 'OK';
+    this.model.pruebaCostura = true;
+    this.snackBar.open('¡Todo marcado como OK!', 'Genial', { duration: 2000 });
+  }
+
+  save(andExport: boolean = false) {
     // Consolidar detalles
     const detalles: any[] = [];
     
@@ -270,6 +315,9 @@ export class InspeccionFormComponent {
     this.apiService.guardarInspeccion(payload).subscribe({
       next: (res) => {
         this.snackBar.open('Inspección guardada exitosamente', 'Cerrar', { duration: 3000 });
+        if (andExport) {
+          this.pdfService.generateInspectionPDF(payload);
+        }
         this.router.navigate(['/inspeccion']);
       },
       error: (err) => {

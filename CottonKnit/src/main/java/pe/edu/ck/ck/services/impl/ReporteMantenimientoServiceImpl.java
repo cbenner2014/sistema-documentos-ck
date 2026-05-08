@@ -2,6 +2,7 @@ package pe.edu.ck.ck.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.ck.ck.entity.ReporteMantenimiento;
 import pe.edu.ck.ck.repositories.ReporteMantenimientoRepository;
 import pe.edu.ck.ck.services.IReporteMantenimientoService;
@@ -18,6 +19,11 @@ public class ReporteMantenimientoServiceImpl implements IReporteMantenimientoSer
     }
 
     @Override
+    public List<ReporteMantenimiento> registrarLote(List<ReporteMantenimiento> reportes) {
+        return repository.saveAll(reportes);
+    }
+
+    @Override
     public List<ReporteMantenimiento> listarTodo() {
         return repository.findAll();
     }
@@ -25,5 +31,11 @@ public class ReporteMantenimientoServiceImpl implements IReporteMantenimientoSer
     @Override
     public List<ReporteMantenimiento> listarPorMaquina(String maquinaId) {
         return repository.findByMaquinaId(maquinaId);
+    }
+
+    @Override
+    @Transactional
+    public void eliminarPorLote(String batchId) {
+        repository.deleteByBatchId(batchId);
     }
 }

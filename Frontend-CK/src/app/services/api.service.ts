@@ -38,6 +38,14 @@ export class ApiService {
     return this.http.post<any>(`${this.apiUrl}/mantenimiento`, reporte);
   }
 
+  guardarReportesBatch(reportes: any[]): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/mantenimiento/batch`, reportes);
+  }
+
+  eliminarReportesBatch(batchId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/mantenimiento/batch/${batchId}`);
+  }
+
   // Inspección
   listarInspecciones(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/inspeccion`);
@@ -45,5 +53,13 @@ export class ApiService {
 
   guardarInspeccion(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/inspeccion`, data);
+  }
+
+  guardarInspeccionesBatch(data: any[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/inspeccion/batch`, data);
+  }
+
+  eliminarInspeccionesBatch(batchId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/inspeccion/batch/${batchId}`);
   }
 }

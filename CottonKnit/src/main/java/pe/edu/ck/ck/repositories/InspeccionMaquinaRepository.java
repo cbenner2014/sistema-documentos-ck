@@ -4,4 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import pe.edu.ck.ck.entity.InspeccionMaquina;
 
 public interface InspeccionMaquinaRepository extends JpaRepository<InspeccionMaquina, Integer> {
+    void deleteByBatchId(String batchId);
 }

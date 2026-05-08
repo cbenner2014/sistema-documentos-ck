@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.ck.ck.entity.InspeccionMaquina;
-import pe.edu.ck.ck.repositories.InspeccionMaquinaRepository;
+import pe.edu.ck.ck.services.IInspeccionService;
 import java.util.List;
 
 @RestController
@@ -13,15 +13,26 @@ import java.util.List;
 public class InspeccionController {
 
     @Autowired
-    private InspeccionMaquinaRepository repository;
+    private IInspeccionService service;
 
     @GetMapping
     public ResponseEntity<List<InspeccionMaquina>> listar() {
-        return ResponseEntity.ok(repository.findAll());
+        return ResponseEntity.ok(service.listar());
     }
 
     @PostMapping
     public ResponseEntity<InspeccionMaquina> guardar(@RequestBody InspeccionMaquina inspeccion) {
-        return ResponseEntity.ok(repository.save(inspeccion));
+        return ResponseEntity.ok(service.guardar(inspeccion));
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<List<InspeccionMaquina>> guardarLote(@RequestBody List<InspeccionMaquina> inspecciones) {
+        return ResponseEntity.ok(service.guardarLote(inspecciones));
+    }
+
+    @DeleteMapping("/batch/{batchId}")
+    public ResponseEntity<Void> eliminarPorLote(@PathVariable String batchId) {
+        service.eliminarPorLote(batchId);
+        return ResponseEntity.noContent().build();
     }
 }
