@@ -39,7 +39,7 @@ import {
     <mat-sidenav-container class="sidenav-container">
       <mat-sidenav #drawer class="sidenav premium-sidebar"
           [attr.role]="'navigation'"
-          [mode]="'side'"
+          mode="side"
           [opened]="true">
         <div class="sidebar-header">
           <div class="logo-container">
@@ -66,6 +66,10 @@ import {
             <svg lucideCheckCircle class="nav-icon"></svg>
             <span class="nav-label">Inspección</span>
           </a>
+          <a mat-list-item routerLink="/maquinas" routerLinkActive="active-link">
+            <svg lucideSettings class="nav-icon"></svg>
+            <span class="nav-label">Maestro de Máquinas</span>
+          </a>
           <div class="nav-divider"></div>
           <a mat-list-item routerLink="/settings" routerLinkActive="active-link">
             <svg lucideSettings class="nav-icon"></svg>
@@ -81,7 +85,7 @@ import {
         </div>
       </mat-sidenav>
       
-      <mat-sidenav-content>
+      <mat-sidenav-content class="main-content">
         <mat-toolbar class="header glass-card">
           <button mat-icon-button (click)="drawer.toggle()" class="menu-btn">
             <svg lucideMenu></svg>
@@ -105,26 +109,25 @@ import {
   styles: [`
     .sidenav-container {
       height: 100vh;
-      background: #f1f5f9;
+      background: #f8fafc;
     }
-    .sidenav {
+    .premium-sidebar {
       width: 280px;
+      background: #1e293b !important; /* Fondo oscuro elegante */
+      color: white !important;
       border: none !important;
-      display: flex;
-      flex-direction: column;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.1);
     }
     .sidebar-header {
-      padding: 2rem;
-      text-align: center;
+      padding: 2.5rem 1.5rem;
     }
     .logo-container {
       display: flex;
       align-items: center;
       gap: 12px;
-      justify-content: center;
     }
     .logo-icon {
-      background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
       color: white;
       width: 40px;
       height: 40px;
@@ -132,117 +135,83 @@ import {
       align-items: center;
       justify-content: center;
       border-radius: 12px;
-      font-weight: bold;
-      font-size: 1.2rem;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
     }
     .logo-text {
-      font-size: 1.5rem;
-      letter-spacing: -0.5px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: white;
     }
     .nav-list {
       padding: 0 1rem;
-      flex: 1;
     }
     .nav-list a {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       border-radius: 12px !important;
-      color: rgba(255, 255, 255, 0.7) !important;
-      transition: all 0.3s ease;
-      height: 48px !important;
+      color: #94a3b8 !important;
+      height: 50px !important;
       display: flex !important;
       align-items: center !important;
     }
     .nav-list a:hover {
-      background: rgba(255, 255, 255, 0.1) !important;
+      background: rgba(255, 255, 255, 0.05) !important;
       color: white !important;
     }
     .active-link {
-      background: rgba(79, 70, 229, 0.2) !important;
-      color: #93c5fd !important;
-      border-right: 3px solid #60a5fa;
+      background: linear-gradient(90deg, rgba(79, 70, 229, 0.2) 0%, rgba(79, 70, 229, 0) 100%) !important;
+      color: #818cf8 !important;
+      border-left: 4px solid #4f46e5;
     }
     .nav-icon {
       width: 20px;
       height: 20px;
       margin-right: 12px;
     }
-    .nav-label {
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-    .arrow-icon {
-      width: 14px;
-      height: 14px;
-      margin-left: auto;
-      opacity: 0.5;
-    }
     .nav-divider {
       height: 1px;
-      background: rgba(255, 255, 255, 0.05);
-      margin: 1.5rem 0;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 1.5rem 1rem;
     }
     .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
       padding: 1.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
     .logout-btn {
       width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #fca5a5 !important;
+      color: #f87171 !important;
       border-radius: 12px !important;
+      background: rgba(248, 113, 113, 0.05) !important;
+    }
+    .main-content {
+      background: #f8fafc;
     }
     .header {
-      margin: 1rem;
-      width: calc(100% - 2rem);
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
       height: 70px;
-      display: flex;
-      align-items: center;
-      padding: 0 1.5rem;
-      color: #1e293b;
+      padding: 0 2rem;
     }
-    .spacer {
-      flex: 1 1 auto;
-    }
-    .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-    .user-name {
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-    .user-role {
-      font-size: 0.75rem;
-      color: #64748b;
-    }
+    .spacer { flex: 1; }
+    .user-profile { display: flex; align-items: center; gap: 12px; }
+    .user-info { display: flex; flex-direction: column; align-items: flex-end; }
+    .user-name { font-weight: 600; font-size: 0.9rem; }
+    .user-role { font-size: 0.75rem; color: #64748b; }
     .user-avatar {
-      width: 40px;
-      height: 40px;
-      background: #e2e8f0;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 38px; height: 38px;
+      background: #4f46e5; color: white;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
       font-weight: bold;
-      color: #4f46e5;
-      border: 2px solid white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     .content-area {
       padding: 2rem;
-      min-height: calc(100vh - 100px);
     }
-    .menu-btn {
-      color: #64748b;
+    .gradient-text {
+      background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   `]
 })

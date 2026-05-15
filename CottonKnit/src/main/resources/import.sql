@@ -1,0 +1,128 @@
+-- USUARIOS INICIALES
+INSERT INTO usuarios (username, password, nombre_completo, rol) VALUES ('admin', 'admin123', 'Administrador Sistema', 'ADMIN');
+INSERT INTO usuarios (username, password, nombre_completo, rol) VALUES ('mecanico', 'mecanico123', 'Juan Perez', 'MECANICO');
+
+-- CATALOGO DE ERRORES (Para Mantenimiento)
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (1, 'Salto de puntada', 'Ajuste de garfio');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (2, 'Rotura de hilo', 'Cambio de aguja y tensión');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (3, 'Ruido excesivo', 'Lubricación de barra de aguja');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (4, 'Puntada floja', 'Ajustar tensión de hilos');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (5, 'Manchas de aceite', 'Limpieza y cambio de retenes');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (6, 'Falla de motor', 'Revisión de conexiones eléctricas');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (7, 'Cuchilla sin filo', 'Afilado o cambio de cuchilla');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (8, 'Desgaste de dientes', 'Cambio de dientes de arrastre');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (9, 'Prensatelas desajustado', 'Nivelación de prensatelas');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (10, 'Falla de posicionador', 'Sincronización electrónica');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (11, 'Aguja despuntada', 'Cambio de aguja');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (12, 'Bobina dañada', 'Reemplazo de portabobina');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (13, 'Correa gastada', 'Cambio de faja o correa');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (14, 'Falla de sensores', 'Limpieza de pelusa en sensores');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (15, 'Calentamiento', 'Revisión de sistema de enfriamiento');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (16, 'Engranaje seco', 'Engrase general de transmisión');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (17, 'Falla de corte', 'Ajuste de solenoide de corte');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (18, 'Vibración fuerte', 'Ajuste de pernos de bancada');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (19, 'Pedal duro', 'Lubricación de varillaje');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (20, 'Falla de lubricación', 'Limpieza de filtro de aceite');
+INSERT INTO catalogo_errores (id, descripcion_problema, descripcion_solucion) VALUES (21, 'Error de programa', 'Reinicio de panel electrónico');
+
+-- DATOS DE EJEMPLO PARA STOCK DE AGUJAS
+INSERT INTO stock_agujas (fecha, cliente, linea, tipo_recta, tipo_remalle, tipo_recubierto, tipo_especiales, total, observaciones) VALUES (CURDATE(), 'COTTON KNIT', 'MUESTRAS', 50, 30, 20, 10, 110, 'Carga inicial de stock');
+
+-- Inserción de máquinas de MUESTRAS (Imagen 1)
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-041', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-057', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-253', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-324', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-400', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-167', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-100', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-244', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-153', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-086', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-201', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-098', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-169', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-218', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-215', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-210', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-399', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-281', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-190', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-328', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-166', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-258', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-144', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-021', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-426', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-054', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-188', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-348', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-095', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-297', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-345', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-290', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-170', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-389', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-036', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('CR-058', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+
+-- Inserción de máquinas de MUESTRAS (Imagen 2)
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R3-038', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-188', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-249', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-247', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-121', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-248', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-135', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R3-006', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-005', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R5-031', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-202', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R3-063', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-250', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-025', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-193', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-147', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RBI-002', 'MUESTRAS', 'BASTILLERA', 'SIRUBA', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-055', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R3-064', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-031', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R5-005', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-012', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-011', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-240', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-165', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R3-051', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-203', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-176', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R5-011', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-021', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-133', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R4-160', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R5-044', 'MUESTRAS', 'REMALLADORA', 'PEGASUS', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('R3-017', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+
+-- Inserción de máquinas de MUESTRAS (Imagen 3)
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RBT-006', 'MUESTRAS', 'BOTONERA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-065', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-090', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-085', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RB-062', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RC-050', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-066', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RB-026', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-073', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-072', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RB-002', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RB-063', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RB-009', 'MUESTRAS', 'BROTHER', 'S-7200C', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RC-006', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RC-020', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-047', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-004', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RC-045', 'MUESTRAS', 'RECUBRIDORA', 'JACK', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-055', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-101', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-064', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-082', 'MUESTRAS', 'RECTA', 'BROTHER', true);
+INSERT INTO maquinas (codigo, linea, marca, modelo, activa) VALUES ('RP-046', 'MUESTRAS', 'RECTA', 'BROTHER', true);

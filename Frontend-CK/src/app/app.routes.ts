@@ -5,6 +5,7 @@ import { StockAgujasListComponent } from './features/stock-agujas/stock-agujas-l
 import { MantenimientoListComponent } from './features/mantenimiento/mantenimiento-list/mantenimiento-list';
 import { InspeccionFormComponent } from './features/inspeccion-maquinas/inspeccion-form/inspeccion-form';
 import { InspeccionListComponent } from './features/inspeccion-maquinas/inspeccion-list/inspeccion-list';
+import { MaquinaListComponent } from './features/maquinas/maquina-list.component';
 
 export const routes: Routes = [
   {
@@ -17,8 +18,9 @@ export const routes: Routes = [
       { path: 'mantenimiento', component: MantenimientoListComponent },
       { path: 'inspeccion', component: InspeccionListComponent },
       { path: 'inspeccion/nuevo', component: InspeccionFormComponent },
-      { path: 'inspeccion-maquinas', redirectTo: 'inspeccion' }, // Alias for compatibility
-      { path: 'settings', component: DashboardComponent }, // Placeholder
+      { path: 'inspeccion-maquinas', redirectTo: 'inspeccion' },
+      { path: 'maquinas', component: MaquinaListComponent },
+      { path: 'settings', component: DashboardComponent },
     ]
   }
 ];

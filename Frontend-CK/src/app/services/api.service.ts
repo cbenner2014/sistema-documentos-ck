@@ -62,4 +62,25 @@ export class ApiService {
   eliminarInspeccionesBatch(batchId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/inspeccion/batch/${batchId}`);
   }
+
+  // Máquinas (Master List)
+  listarMaquinas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/maquinas`);
+  }
+
+  listarMaquinasActivas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/maquinas/activas`);
+  }
+
+  guardarMaquina(maquina: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/maquinas`, maquina);
+  }
+
+  eliminarMaquina(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/maquinas/${id}`);
+  }
+
+  toggleMaquinaStatus(id: number): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/maquinas/${id}/status`, {});
+  }
 }

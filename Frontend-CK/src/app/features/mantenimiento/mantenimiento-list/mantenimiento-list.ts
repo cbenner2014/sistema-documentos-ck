@@ -253,7 +253,7 @@ export class MantenimientoListComponent implements OnInit {
   }
 
   generateMagicData() {
-    const machines = ['RB-029', 'CR-244', 'RC-093', 'RY-248', 'RS-005', 'GR-078', 'RB-002', 'RP-004', 'RC-062', 'RY-031'];
+    const machines = ['CR-041', 'CR-057', 'CR-253', 'R3-038', 'R4-188', 'R4-121', 'RP-065', 'RB-062', 'RC-050', 'RP-004'];
     const pCodes = [1, 6, 10, 17, 9, 16, 21, 2, 7, 8, 4, 13];
     const bId = 'BATCH-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     const magicEntries: any[] = [];
