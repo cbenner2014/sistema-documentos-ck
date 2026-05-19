@@ -6,4 +6,6 @@ import java.util.List;
 public interface IUsuarioService {
     List<Usuario> listarTodos();
     Usuario guardar(Usuario usuario);
+    Usuario actualizar(Integer id, Usuario usuario);
+    void eliminar(Integer id);
 }

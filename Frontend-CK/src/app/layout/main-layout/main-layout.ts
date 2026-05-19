@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AuthService } from '../../services/auth.service';
 import { 
   LucideLayoutDashboard, 
   LucideDatabase, 
@@ -17,7 +18,8 @@ import {
   LucideSun,
   LucideMoon,
   LucideSearch,
-  LucideDynamicIcon
+  LucideDynamicIcon,
+  LucideUsers
 } from '@lucide/angular';
 
 @Component({
@@ -57,7 +59,7 @@ import {
         </div>
 
         <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-          <a *ngFor="let item of menuItems" 
+          <a *ngFor="let item of getFilteredMenuItems()" 
              [routerLink]="item.path" 
              routerLinkActive="bg-indigo-50 text-indigo-600 shadow-sm shadow-indigo-100"
              class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all group"
@@ -77,6 +79,7 @@ import {
 
         <div class="p-4 border-t border-slate-100 bg-slate-50/50">
           <button 
+            (click)="onLogout()"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-colors group overflow-hidden"
           >
             <svg lucideLogOut class="w-5 h-5 shrink-0 group-hover:-translate-x-1 transition-transform"></svg>
@@ -106,7 +109,7 @@ import {
         <!-- Header -->
         <header class="h-20 bg-white/70 backdrop-blur-xl border-b border-slate-200 flex items-center justify-between px-8 z-40 sticky top-0 shrink-0">
           <div class="flex items-center gap-4">
-            <h2 class="text-xl font-bold text-slate-800 tracking-tight">Dashboard</h2>
+            <h2 class="text-xl font-bold text-slate-800 tracking-tight">Menú Principal</h2>
           </div>
 
           <div class="flex items-center gap-6">
@@ -126,13 +129,16 @@ import {
               </button>
             </div>
 
-            <div class="flex items-center gap-3">
+            <!-- Dynamic User Display -->
+            <div class="flex items-center gap-3" *ngIf="authService.currentUser$ | async as user">
               <div class="text-right hidden sm:block">
-                <p class="text-sm font-bold text-slate-800 leading-none">Darwin Admin</p>
-                <p class="text-xs text-slate-500 mt-1 font-medium">Administrador</p>
+                <p class="text-sm font-bold text-slate-800 leading-none">{{ user.nombreCompleto }}</p>
+                <p class="text-xs text-slate-500 mt-1 font-medium">
+                  {{ user.rol === 'ADMIN' ? 'Administrador' : 'Mecánico' }}
+                </p>
               </div>
-              <div class="w-10 h-10 rounded-xl bg-indigo-100 border-2 border-indigo-200 flex items-center justify-center text-indigo-700 font-bold shadow-sm">
-                D
+              <div class="w-10 h-10 rounded-xl bg-indigo-100 border-2 border-indigo-200 flex items-center justify-center text-indigo-700 font-bold shadow-sm uppercase">
+                {{ user.nombreCompleto.substring(0, 1) }}
               </div>
             </div>
           </div>
@@ -158,11 +164,25 @@ export class MainLayoutComponent {
   LucideSun = LucideSun;
   LucideMoon = LucideMoon;
 
-  menuItems = [
-    { label: 'Dashboard', icon: LucideLayoutDashboard, path: '/dashboard' },
-    { label: 'Stock Agujas', icon: LucideDatabase, path: '/stock-agujas' },
-    { label: 'Mantenimiento', icon: LucideClipboardList, path: '/mantenimiento' },
-    { label: 'Inspección', icon: LucideCheckCircle, path: '/inspeccion' },
-    { label: 'Maestro de Máquinas', icon: LucideSettings, path: '/maquinas' },
-  ];
+  constructor(public authService: AuthService) {}
+
+  getFilteredMenuItems() {
+    const items: any[] = [
+      { label: 'Dashboard', icon: LucideLayoutDashboard, path: '/dashboard' },
+      { label: 'Stock Agujas', icon: LucideDatabase, path: '/stock-agujas' },
+      { label: 'Mantenimiento', icon: LucideClipboardList, path: '/mantenimiento' },
+      { label: 'Inspección', icon: LucideCheckCircle, path: '/inspeccion' },
+      { label: 'Maestro de Máquinas', icon: LucideSettings, path: '/maquinas' },
+    ];
+    
+    if (this.authService.hasRole('ADMIN')) {
+      items.push({ label: 'Gestión de Usuarios', icon: LucideUsers, path: '/usuarios' });
+    }
+    
+    return items;
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+  }
 }

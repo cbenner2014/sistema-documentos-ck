@@ -23,4 +23,22 @@ public class UsuarioServiceImpl implements IUsuarioService {
         // Por ahora sin encriptar, directo a la base de datos
         return repository.save(usuario);
     }
+
+    @Override
+    public Usuario actualizar(Integer id, Usuario usuario) {
+        return repository.findById(id).map(existing -> {
+            existing.setUsername(usuario.getUsername());
+            existing.setNombreCompleto(usuario.getNombreCompleto());
+            existing.setRol(usuario.getRol());
+            if (usuario.getPassword() != null && !usuario.getPassword().trim().isEmpty()) {
+                existing.setPassword(usuario.getPassword());
+            }
+            return repository.save(existing);
+        }).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
+    @Override
+    public void eliminar(Integer id) {
+        repository.deleteById(id);
+    }
 }
