@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -59,7 +59,7 @@ import {
         </div>
 
         <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-          <a *ngFor="let item of getFilteredMenuItems()" 
+          <a *ngFor="let item of menuItems" 
              [routerLink]="item.path" 
              routerLinkActive="bg-indigo-50 text-indigo-600 shadow-sm shadow-indigo-100"
              class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all group"
@@ -158,16 +158,17 @@ import {
     ::ng-deep .active-link { @apply bg-indigo-50 text-indigo-600 shadow-sm shadow-indigo-100; }
   `]
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
   isCollapsed = false;
   isDarkMode = false;
   LucideSun = LucideSun;
   LucideMoon = LucideMoon;
+  menuItems: any[] = [];
 
   constructor(public authService: AuthService) {}
 
-  getFilteredMenuItems() {
-    const items: any[] = [
+  ngOnInit() {
+    this.menuItems = [
       { label: 'Dashboard', icon: LucideLayoutDashboard, path: '/dashboard' },
       { label: 'Stock Agujas', icon: LucideDatabase, path: '/stock-agujas' },
       { label: 'Mantenimiento', icon: LucideClipboardList, path: '/mantenimiento' },
@@ -176,10 +177,8 @@ export class MainLayoutComponent {
     ];
     
     if (this.authService.hasRole('ADMIN')) {
-      items.push({ label: 'Gestión de Usuarios', icon: LucideUsers, path: '/usuarios' });
+      this.menuItems.push({ label: 'Gestión de Usuarios', icon: LucideUsers, path: '/usuarios' });
     }
-    
-    return items;
   }
 
   onLogout(): void {
