@@ -32,119 +32,151 @@ import { MaquinaDialogComponent } from './maquina-dialog.component';
     LucideSettings
   ],
   template: `
-    <div class="page-container">
-      <div class="page-header">
-        <div class="title-section">
-          <h1 class="gradient-text">Maestro de Máquinas</h1>
-          <p class="subtitle">Gestión centralizada del inventario industrial CottonKnit</p>
+    <div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <!-- Page Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Maestro de Máquinas</h1>
+          <!-- Rebuild trigger -->
+          <p class="text-slate-500 font-medium mt-1">Gestión centralizada del inventario industrial CottonKnit</p>
         </div>
-        <div class="actions">
-          <button mat-flat-button class="premium-btn" (click)="openDialog()">
-            <svg lucidePlus class="w-4 h-4 mr-2"></svg>
-            Agregar Nueva Máquina
-          </button>
+        <button 
+          (click)="openDialog()"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95 shrink-0"
+        >
+          <svg lucidePlus class="w-5 h-5"></svg>
+          Agregar Nueva Máquina
+        </button>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div class="p-3 bg-slate-100 text-slate-600 rounded-xl">
+            <svg lucideSettings class="w-6 h-6"></svg>
+          </div>
+          <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Total Máquinas</p>
+            <p class="text-2xl font-black text-slate-900 mt-1">{{ dataSource.length }}</p>
+          </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+            <svg lucideCheckCircle class="w-6 h-6"></svg>
+          </div>
+          <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Activas</p>
+            <p class="text-2xl font-black text-emerald-600 mt-1">{{ totalActivas }}</p>
+          </div>
         </div>
       </div>
 
-      <!-- Stats -->
-      <div class="stats-row flex gap-4 mt-6 mb-6">
-        <div class="mini-card glass-card flex-1 p-4 flex items-center gap-4">
-          <svg lucideSettings class="w-8 h-8 text-indigo-500"></svg>
-          <div>
-             <span class="text-xs text-slate-500 block">Total Máquinas</span>
-             <span class="text-xl font-bold">{{ dataSource.length }}</span>
-          </div>
-        </div>
-        <div class="mini-card glass-card flex-1 p-4 flex items-center gap-4">
-          <svg lucideCheckCircle class="w-8 h-8 text-green-500"></svg>
-          <div>
-             <span class="text-xs text-slate-500 block">Activas</span>
-             <span class="text-xl font-bold text-green-600">{{ totalActivas }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="table-container glass-card overflow-hidden">
-        <div class="p-4 bg-slate-50/50 border-b flex justify-between items-center">
-           <mat-form-field appearance="outline" class="w-full max-w-md dense-field no-subscript">
-              <mat-label>Buscar máquina por código, marca o línea...</mat-label>
-              <input matInput (keyup)="applyFilter($event)" placeholder="Ej: CR-041">
-           </mat-form-field>
+      <!-- Table Section -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <!-- Filter Header -->
+        <div class="p-4 bg-slate-50/50 border-b border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+           <div class="relative w-full max-w-md">
+             <svg lucideSettings class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></svg>
+             <input 
+               type="text" 
+               (keyup)="applyFilter($event)"
+               placeholder="Buscar por código, marca o línea..."
+               class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+             >
+           </div>
+           <div class="flex items-center gap-2 text-xs font-bold text-slate-500 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+             <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
+             {{ filteredData.length }} resultados encontrados
+           </div>
         </div>
 
-        <table mat-table [dataSource]="filteredData" class="premium-table">
-          <ng-container matColumnDef="codigo">
-            <th mat-header-cell *matHeaderCellDef> Código </th>
-            <td mat-cell *matCellDef="let element"> 
-               <span class="badge blue font-mono">{{element.codigo}}</span>
-            </td>
-          </ng-container>
+        <div class="overflow-x-auto">
+          <table mat-table [dataSource]="filteredData" class="w-full">
+            <!-- Codigo Column -->
+            <ng-container matColumnDef="codigo">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> Código </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4"> 
+                 <span class="bg-indigo-50 text-indigo-700 font-mono text-xs font-black px-2.5 py-1 rounded-md border border-indigo-100 shadow-sm">{{element.codigo}}</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="linea">
-            <th mat-header-cell *matHeaderCellDef> Línea </th>
-            <td mat-cell *matCellDef="let element"> {{element.linea}} </td>
-          </ng-container>
+            <!-- Linea Column -->
+            <ng-container matColumnDef="linea">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> Línea </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-sm font-bold text-slate-700"> {{element.linea}} </td>
+            </ng-container>
 
-          <ng-container matColumnDef="marca">
-            <th mat-header-cell *matHeaderCellDef> Marca / Modelo </th>
-            <td mat-cell *matCellDef="let element"> 
-               <div class="flex flex-col">
-                  <span class="font-medium">{{element.marca}}</span>
-                  <span class="text-xs text-slate-400">{{element.modelo}}</span>
-               </div>
-            </td>
-          </ng-container>
+            <!-- Marca Column -->
+            <ng-container matColumnDef="marca">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> Marca / Modelo </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4"> 
+                 <div class="flex flex-col">
+                    <span class="text-sm font-black text-slate-800">{{element.marca}}</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{{element.modelo}}</span>
+                 </div>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="serie">
-            <th mat-header-cell *matHeaderCellDef> Serie </th>
-            <td mat-cell *matCellDef="let element"> {{element.serie || '---'}} </td>
-          </ng-container>
+            <!-- Serie Column -->
+            <ng-container matColumnDef="serie">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> Serie </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-sm font-medium text-slate-500 font-mono"> {{element.serie || '---'}} </td>
+            </ng-container>
 
-          <ng-container matColumnDef="estado">
-            <th mat-header-cell *matHeaderCellDef> Estado </th>
-            <td mat-cell *matCellDef="let element">
-               <mat-slide-toggle [checked]="element.activa" (change)="toggleStatus(element)" color="primary">
-                  {{ element.activa ? 'Activa' : 'Inactiva' }}
-               </mat-slide-toggle>
-            </td>
-          </ng-container>
+            <!-- Estado Column -->
+            <ng-container matColumnDef="estado">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30 text-center"> Estado </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-center">
+                 <div class="flex items-center justify-center gap-2">
+                   <mat-slide-toggle 
+                     [checked]="element.activa" 
+                     (change)="toggleStatus(element)" 
+                     color="primary"
+                     class="scale-90"
+                   ></mat-slide-toggle>
+                   <span class="text-[10px] font-black uppercase tracking-widest" [ngClass]="element.activa ? 'text-emerald-600' : 'text-slate-400'">
+                     {{ element.activa ? 'Activa' : 'Inactiva' }}
+                   </span>
+                 </div>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="acciones">
-            <th mat-header-cell *matHeaderCellDef> Acciones </th>
-            <td mat-cell *matCellDef="let element">
-              <div class="flex gap-2">
-                <button mat-icon-button class="edit-btn" (click)="openDialog(element)" title="Editar">
-                  <svg lucideEdit class="w-5 h-5 text-indigo-500"></svg>
-                </button>
-                <button mat-icon-button class="delete-btn" (click)="deleteMaquina(element)" title="Eliminar">
-                  <svg lucideTrash2 class="w-5 h-5 text-red-400"></svg>
-                </button>
-              </div>
-            </td>
-          </ng-container>
+            <!-- Acciones Column -->
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30 text-right"> Acciones </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-right">
+                <div class="flex justify-end gap-1">
+                  <button (click)="openDialog(element)" class="p-2 hover:bg-indigo-50 text-indigo-600 rounded-lg transition-colors group">
+                    <svg lucideEdit class="w-4 h-4 group-hover:scale-110 transition-transform"></svg>
+                  </button>
+                  <button (click)="deleteMaquina(element)" class="p-2 hover:bg-red-50 text-red-400 rounded-lg transition-colors group">
+                    <svg lucideTrash2 class="w-4 h-4 group-hover:scale-110 transition-transform"></svg>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.inactive-row]="!row.activa"></tr>
-        </table>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="h-14"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                class="h-16 hover:bg-slate-50/80 transition-colors border-b border-slate-100 last:border-0"
+                [class.opacity-50]="!row.activa"></tr>
+          </table>
+        </div>
         
-        <div *ngIf="filteredData.length === 0" class="empty-state p-12 text-center">
-           <svg lucideSettings class="w-16 h-16 text-slate-200 mx-auto mb-4"></svg>
-           <p class="text-slate-400 italic">No se encontraron máquinas que coincidan con la búsqueda.</p>
+        <!-- Empty State -->
+        <div *ngIf="filteredData.length === 0" class="p-20 text-center flex flex-col items-center">
+           <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+             <svg lucideSettings class="w-8 h-8 text-slate-200"></svg>
+           </div>
+           <h4 class="font-bold text-slate-800">No se encontraron máquinas</h4>
+           <p class="text-sm text-slate-400 mt-1">Prueba con otro código o ajusta los filtros.</p>
         </div>
       </div>
     </div>
   `,
   styles: [`
-    .page-container { padding: 1.5rem; }
-    .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05); }
-    .premium-btn { border-radius: 12px !important; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important; color: white !important; height: 50px !important; padding: 0 25px !important; font-weight: 600; }
-    .premium-table { width: 100%; background: transparent !important; }
-    .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; }
-    .badge.blue { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-    .no-subscript ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; }
-    .inactive-row { opacity: 0.6; background-color: #f8fafc; }
-    .edit-btn:hover { background: #eef2ff; border-radius: 8px; }
-    .delete-btn:hover { background: #fef2f2; border-radius: 8px; }
+    :host { display: block; }
+    ::ng-deep .mat-mdc-slide-toggle.mat-primary { --mdc-switch-selected-focus-state-layer-color: #4f46e5; --mdc-switch-selected-handle-color: #4f46e5; --mdc-switch-selected-track-color: #c7d2fe; }
   `]
 })
 export class MaquinaListComponent implements OnInit {

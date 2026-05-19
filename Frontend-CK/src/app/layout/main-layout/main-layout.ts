@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { 
   LucideLayoutDashboard, 
   LucideDatabase, 
@@ -13,7 +12,12 @@ import {
   LucideLogOut, 
   LucideMenu,
   LucideChevronRight,
-  LucideCheckCircle
+  LucideCheckCircle,
+  LucideBell,
+  LucideSun,
+  LucideMoon,
+  LucideSearch,
+  LucideDynamicIcon
 } from '@lucide/angular';
 
 @Component({
@@ -23,196 +27,142 @@ import {
     CommonModule, 
     RouterModule, 
     MatSidenavModule, 
-    MatToolbarModule, 
-    MatListModule, 
     MatButtonModule,
-    LucideLayoutDashboard,
-    LucideDatabase,
-    LucideClipboardList,
-    LucideSettings,
+    MatTooltipModule,
     LucideLogOut,
-    LucideMenu,
     LucideChevronRight,
-    LucideCheckCircle
+    LucideSearch,
+    LucideBell,
+    LucideDynamicIcon
   ],
   template: `
-    <mat-sidenav-container class="sidenav-container">
-      <mat-sidenav #drawer class="sidenav premium-sidebar"
-          [attr.role]="'navigation'"
-          mode="side"
-          [opened]="true">
-        <div class="sidebar-header">
-          <div class="logo-container">
-            <div class="logo-icon">CK</div>
-            <span class="logo-text gradient-text">CottonKnit</span>
+    <div class="h-screen w-full flex bg-[#f4f6f9] overflow-hidden" [class.dark]="isDarkMode">
+      <!-- Sidebar -->
+      <aside 
+        class="bg-white h-full border-r border-slate-200 transition-all duration-300 ease-in-out relative flex flex-col z-50 shadow-sm"
+        [class.w-72]="!isCollapsed"
+        [class.w-20]="isCollapsed"
+      >
+        <div class="p-6 flex items-center gap-3 overflow-hidden h-20 border-b border-slate-100/50">
+          <div class="w-10 h-10 min-w-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-200 shrink-0">
+            CK
           </div>
+          <span 
+            class="font-extrabold text-xl tracking-tight text-slate-800 transition-opacity duration-200 whitespace-nowrap"
+            [class.opacity-0]="isCollapsed"
+            [class.pointer-events-none]="isCollapsed"
+          >
+            Cotton<span class="text-indigo-600">Knit</span>
+          </span>
         </div>
-        
-        <mat-nav-list class="nav-list">
-          <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
-            <svg lucideLayoutDashboard class="nav-icon"></svg>
-            <span class="nav-label">Dashboard</span>
-            <svg lucideChevronRight class="arrow-icon"></svg>
-          </a>
-          <a mat-list-item routerLink="/stock-agujas" routerLinkActive="active-link">
-            <svg lucideDatabase class="nav-icon"></svg>
-            <span class="nav-label">Stock Agujas</span>
-          </a>
-          <a mat-list-item routerLink="/mantenimiento" routerLinkActive="active-link">
-            <svg lucideClipboardList class="nav-icon"></svg>
-            <span class="nav-label">Mantenimiento</span>
-          </a>
-          <a mat-list-item routerLink="/inspeccion" routerLinkActive="active-link">
-            <svg lucideCheckCircle class="nav-icon"></svg>
-            <span class="nav-label">Inspección</span>
-          </a>
-          <a mat-list-item routerLink="/maquinas" routerLinkActive="active-link">
-            <svg lucideSettings class="nav-icon"></svg>
-            <span class="nav-label">Maestro de Máquinas</span>
-          </a>
-          <div class="nav-divider"></div>
-          <a mat-list-item routerLink="/settings" routerLinkActive="active-link">
-            <svg lucideSettings class="nav-icon"></svg>
-            <span class="nav-label">Configuración</span>
-          </a>
-        </mat-nav-list>
 
-        <div class="sidebar-footer">
-          <button mat-button class="logout-btn">
-            <svg lucideLogOut class="nav-icon"></svg>
-            <span>Cerrar Sesión</span>
+        <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+          <a *ngFor="let item of menuItems" 
+             [routerLink]="item.path" 
+             routerLinkActive="bg-indigo-50 text-indigo-600 shadow-sm shadow-indigo-100"
+             class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all group"
+             [matTooltip]="isCollapsed ? item.label : ''"
+             matTooltipPosition="right"
+          >
+            <svg [lucideIcon]="item.icon" class="w-5 h-5 shrink-0 transition-transform group-hover:scale-110"></svg>
+            <span 
+              class="font-semibold text-[15px] whitespace-nowrap transition-opacity duration-200"
+              [class.opacity-0]="isCollapsed"
+              [class.pointer-events-none]="isCollapsed"
+            >
+              {{ item.label }}
+            </span>
+          </a>
+        </nav>
+
+        <div class="p-4 border-t border-slate-100 bg-slate-50/50">
+          <button 
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-colors group overflow-hidden"
+          >
+            <svg lucideLogOut class="w-5 h-5 shrink-0 group-hover:-translate-x-1 transition-transform"></svg>
+            <span 
+              class="font-bold text-[15px] whitespace-nowrap transition-opacity"
+              [class.opacity-0]="isCollapsed"
+            >
+              Cerrar Sesión
+            </span>
           </button>
         </div>
-      </mat-sidenav>
-      
-      <mat-sidenav-content class="main-content">
-        <mat-toolbar class="header glass-card">
-          <button mat-icon-button (click)="drawer.toggle()" class="menu-btn">
-            <svg lucideMenu></svg>
-          </button>
-          <span class="spacer"></span>
-          <div class="user-profile">
-            <div class="user-info">
-              <span class="user-name">Darwin Admin</span>
-              <span class="user-role">Administrador</span>
+
+        <!-- Toggle Collapse Button -->
+        <button 
+          (click)="isCollapsed = !isCollapsed"
+          class="absolute -right-3 top-24 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-600 hover:text-white transition-all z-[60]"
+        >
+          <svg lucideChevronRight 
+               class="w-4 h-4 transition-transform duration-300" 
+               [class.rotate-180]="!isCollapsed">
+          </svg>
+        </button>
+      </aside>
+
+      <!-- Main Content Container -->
+      <div class="flex-1 flex flex-col min-w-0 relative h-full overflow-hidden">
+        <!-- Header -->
+        <header class="h-20 bg-white/70 backdrop-blur-xl border-b border-slate-200 flex items-center justify-between px-8 z-40 sticky top-0 shrink-0">
+          <div class="flex items-center gap-4">
+            <h2 class="text-xl font-bold text-slate-800 tracking-tight">Dashboard</h2>
+          </div>
+
+          <div class="flex items-center gap-6">
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden md:flex items-center bg-slate-100 rounded-xl px-4 py-2 border border-slate-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+              <svg lucideSearch class="w-4 h-4 text-slate-400 mr-2"></svg>
+              <input type="text" placeholder="Buscar..." class="bg-transparent border-none outline-none text-sm w-48 text-slate-600 placeholder:text-slate-400">
             </div>
-            <div class="user-avatar">D</div>
-          </div>
-        </mat-toolbar>
 
-        <main class="content-area">
-          <router-outlet></router-outlet>
+            <div class="flex items-center gap-2 border-r border-slate-200 pr-4">
+              <button (click)="isDarkMode = !isDarkMode" class="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
+                <svg [lucideIcon]="isDarkMode ? LucideSun : LucideMoon" class="w-5 h-5"></svg>
+              </button>
+              <button class="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 relative transition-colors">
+                <svg lucideBell class="w-5 h-5"></svg>
+                <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+              </button>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="text-right hidden sm:block">
+                <p class="text-sm font-bold text-slate-800 leading-none">Darwin Admin</p>
+                <p class="text-xs text-slate-500 mt-1 font-medium">Administrador</p>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-indigo-100 border-2 border-indigo-200 flex items-center justify-center text-indigo-700 font-bold shadow-sm">
+                D
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Dynamic Content -->
+        <main class="flex-1 overflow-y-auto p-8 scroll-smooth bg-[#f4f6f9]/50">
+          <div class="max-w-7xl mx-auto">
+             <router-outlet></router-outlet>
+          </div>
         </main>
-      </mat-sidenav-content>
-    </mat-sidenav-container>
+      </div>
+    </div>
   `,
   styles: [`
-    .sidenav-container {
-      height: 100vh;
-      background: #f8fafc;
-    }
-    .premium-sidebar {
-      width: 280px;
-      background: #1e293b !important; /* Fondo oscuro elegante */
-      color: white !important;
-      border: none !important;
-      box-shadow: 4px 0 24px rgba(0,0,0,0.1);
-    }
-    .sidebar-header {
-      padding: 2.5rem 1.5rem;
-    }
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .logo-icon {
-      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-      color: white;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      font-weight: 800;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
-    }
-    .logo-text {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: white;
-    }
-    .nav-list {
-      padding: 0 1rem;
-    }
-    .nav-list a {
-      margin-bottom: 6px;
-      border-radius: 12px !important;
-      color: #94a3b8 !important;
-      height: 50px !important;
-      display: flex !important;
-      align-items: center !important;
-    }
-    .nav-list a:hover {
-      background: rgba(255, 255, 255, 0.05) !important;
-      color: white !important;
-    }
-    .active-link {
-      background: linear-gradient(90deg, rgba(79, 70, 229, 0.2) 0%, rgba(79, 70, 229, 0) 100%) !important;
-      color: #818cf8 !important;
-      border-left: 4px solid #4f46e5;
-    }
-    .nav-icon {
-      width: 20px;
-      height: 20px;
-      margin-right: 12px;
-    }
-    .nav-divider {
-      height: 1px;
-      background: rgba(255, 255, 255, 0.1);
-      margin: 1.5rem 1rem;
-    }
-    .sidebar-footer {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      padding: 1.5rem;
-    }
-    .logout-btn {
-      width: 100%;
-      color: #f87171 !important;
-      border-radius: 12px !important;
-      background: rgba(248, 113, 113, 0.05) !important;
-    }
-    .main-content {
-      background: #f8fafc;
-    }
-    .header {
-      background: white;
-      border-bottom: 1px solid #e2e8f0;
-      height: 70px;
-      padding: 0 2rem;
-    }
-    .spacer { flex: 1; }
-    .user-profile { display: flex; align-items: center; gap: 12px; }
-    .user-info { display: flex; flex-direction: column; align-items: flex-end; }
-    .user-name { font-weight: 600; font-size: 0.9rem; }
-    .user-role { font-size: 0.75rem; color: #64748b; }
-    .user-avatar {
-      width: 38px; height: 38px;
-      background: #4f46e5; color: white;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-weight: bold;
-    }
-    .content-area {
-      padding: 2rem;
-    }
-    .gradient-text {
-      background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    :host { display: block; height: 100%; }
+    ::ng-deep .active-link { @apply bg-indigo-50 text-indigo-600 shadow-sm shadow-indigo-100; }
   `]
 })
-export class MainLayoutComponent {}
+export class MainLayoutComponent {
+  isCollapsed = false;
+  isDarkMode = false;
+  LucideSun = LucideSun;
+  LucideMoon = LucideMoon;
+
+  menuItems = [
+    { label: 'Dashboard', icon: LucideLayoutDashboard, path: '/dashboard' },
+    { label: 'Stock Agujas', icon: LucideDatabase, path: '/stock-agujas' },
+    { label: 'Mantenimiento', icon: LucideClipboardList, path: '/mantenimiento' },
+    { label: 'Inspección', icon: LucideCheckCircle, path: '/inspeccion' },
+    { label: 'Maestro de Máquinas', icon: LucideSettings, path: '/maquinas' },
+  ];
+}

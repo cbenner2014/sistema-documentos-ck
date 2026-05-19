@@ -6,11 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { LucideLayoutDashboard, LucidePlus, LucideSearch, LucideFileText, LucideSave } from '@lucide/angular';
+import { LucideLayoutDashboard, LucidePlus, LucideSearch, LucideFileText, LucideSave, LucideDownload, LucideDatabase } from '@lucide/angular';
 import { StockAgujas } from '../../../models/entities.models';
 import { ApiService } from '../../../services/api.service';
 import { PdfService } from '../../../services/pdf.service';
-import { LucideDownload } from '@lucide/angular';
 
 @Component({
   selector: 'app-stock-agujas-list',
@@ -30,157 +29,186 @@ import { LucideDownload } from '@lucide/angular';
     LucideDownload
   ],
   template: `
-    <div class="page-container">
-      <div class="page-header">
-        <div class="title-section">
-          <h1 class="gradient-text">Clasificación de Agujas</h1>
-          <p class="subtitle">Gestión y control de inventario de agujas</p>
+    <div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <!-- Page Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Clasificación de Agujas</h1>
+          <p class="text-slate-500 font-medium mt-1">Gestión y control de inventario de agujas por línea</p>
         </div>
-        <div class="actions">
-          <button mat-flat-button class="premium-btn" (click)="toggleForm()">
-            <svg lucidePlus></svg>
-            {{ showForm ? 'Cerrar Registro' : 'Nuevo Registro' }}
-          </button>
-          <button mat-stroked-button class="ml-2 export-btn" (click)="exportPDF()" [disabled]="dataSource.length === 0">
-            <svg lucideDownload class="mr-2 h-4 w-4"></svg>
+        <div class="flex items-center gap-3">
+          <button 
+            (click)="exportPDF()" 
+            [disabled]="dataSource.length === 0"
+            class="px-5 py-3 rounded-xl border-2 border-indigo-600 text-indigo-600 font-bold flex items-center gap-2 hover:bg-indigo-50 transition-all disabled:opacity-50 disabled:border-slate-300 disabled:text-slate-400"
+          >
+            <svg lucideDownload class="w-4 h-4"></svg>
             Exportar Stock (PDF)
           </button>
+          <button 
+            (click)="toggleForm()"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95 shrink-0"
+          >
+            <svg lucidePlus class="w-5 h-5 transition-transform" [class.rotate-45]="showForm"></svg>
+            {{ showForm ? 'Cerrar Formulario' : 'Nuevo Registro' }}
+          </button>
         </div>
       </div>
 
-      <!-- New Record Form -->
-      <div class="form-container glass-card mb-6" *ngIf="showForm">
-        <h3>Llenado de Clasificación de Agujas</h3>
-        <div class="form-grid">
-           <mat-form-field appearance="outline">
-             <mat-label>Fecha</mat-label>
-             <input matInput type="date" [(ngModel)]="newRecord.fecha">
-           </mat-form-field>
-           <mat-form-field appearance="outline">
-             <mat-label>Línea</mat-label>
-             <input matInput [(ngModel)]="newRecord.linea">
-           </mat-form-field>
-           <mat-form-field appearance="outline">
-             <mat-label>Cliente</mat-label>
-             <input matInput [(ngModel)]="newRecord.cliente">
-           </mat-form-field>
-           <mat-form-field appearance="outline">
-             <mat-label>Cant. Recta</mat-label>
-             <input matInput type="number" [(ngModel)]="newRecord.tipoRecta" (input)="updateTotal()">
-           </mat-form-field>
-           <mat-form-field appearance="outline">
-             <mat-label>Cant. Remalle</mat-label>
-             <input matInput type="number" [(ngModel)]="newRecord.tipoRemalle" (input)="updateTotal()">
-           </mat-form-field>
-           <mat-form-field appearance="outline">
-             <mat-label>Cant. Recubierto</mat-label>
-             <input matInput type="number" [(ngModel)]="newRecord.tipoRecubierto" (input)="updateTotal()">
-           </mat-form-field>
-           <mat-form-field appearance="outline">
-             <mat-label>Cant. Especiales</mat-label>
-             <input matInput type="number" [(ngModel)]="newRecord.tipoEspeciales" (input)="updateTotal()">
-           </mat-form-field>
-           <div class="total-display">
-             <label>Total:</label>
-             <span>{{ newRecord.total }}</span>
-           </div>
+      <!-- New Record Form (Collapsible) -->
+      <div *ngIf="showForm" class="bg-white rounded-2xl border-2 border-indigo-100 shadow-xl shadow-indigo-50/50 overflow-hidden animate-in zoom-in-95 duration-300">
+        <div class="p-6 border-b border-indigo-50 bg-indigo-50/30 flex items-center justify-between">
+          <h3 class="font-bold text-indigo-900 flex items-center gap-2">
+            <svg lucidePlus class="w-5 h-5"></svg>
+            Llenado de Clasificación de Agujas (MDM-01)
+          </h3>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Estado:</span>
+            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-100 px-2 py-0.5 rounded">Editable</span>
+          </div>
         </div>
-        <div class="form-actions">
-           <button mat-flat-button color="primary" (click)="saveRecord()" class="save-btn" [disabled]="!isFormValid()">
-             <svg lucideSave class="mr-2 h-4 w-4"></svg>
-             Guardar en Sistema
-           </button>
+        
+        <div class="p-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Fecha</label>
+              <input type="date" [(ngModel)]="newRecord.fecha" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Cliente</label>
+              <input type="text" [(ngModel)]="newRecord.cliente" placeholder="Ej: Cotton Knit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Línea / Módulo</label>
+              <input type="text" [(ngModel)]="newRecord.linea" placeholder="Ej: Muestras" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+            </div>
+            
+            <div class="md:col-span-3 lg:col-span-1 bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center">
+              <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Total Agujas</span>
+              <span class="text-4xl font-black text-indigo-600 mt-1">{{ newRecord.total }}</span>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Cant. Recta</label>
+              <input type="number" [(ngModel)]="newRecord.tipoRecta" (input)="updateTotal()" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono">
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Cant. Remalle</label>
+              <input type="number" [(ngModel)]="newRecord.tipoRemalle" (input)="updateTotal()" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono">
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Cant. Recubierto</label>
+              <input type="number" [(ngModel)]="newRecord.tipoRecubierto" (input)="updateTotal()" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono">
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Cant. Especiales</label>
+              <input type="number" [(ngModel)]="newRecord.tipoEspeciales" (input)="updateTotal()" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono">
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-8 gap-3">
+            <button (click)="toggleForm()" class="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors">Cancelar</button>
+            <button 
+              (click)="saveRecord()" 
+              [disabled]="!isFormValid()"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-emerald-200 transition-all disabled:opacity-50 disabled:shadow-none active:scale-95"
+            >
+              <svg lucideSave class="w-5 h-5"></svg>
+              Guardar en Base de Datos
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="filter-bar glass-card">
-        <div class="search-input">
-          <svg lucideSearch></svg>
-          <input type="text" placeholder="Buscar por cliente o línea..." (input)="applyFilter($event)">
+      <!-- Table Section -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/20">
+          <div class="relative w-full max-w-sm">
+            <svg lucideSearch class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></svg>
+            <input 
+              type="text" 
+              (input)="applyFilter($event)"
+              placeholder="Filtrar por cliente o línea..."
+              class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+            >
+          </div>
+          <div class="flex items-center gap-6">
+            <div class="flex flex-col items-end">
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Registros</span>
+              <span class="text-sm font-black text-slate-700 mt-1">{{ dataSource.length }}</span>
+            </div>
+            <div class="h-8 w-px bg-slate-200"></div>
+            <div class="flex flex-col items-end">
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Total Stock</span>
+              <span class="text-sm font-black text-indigo-600 mt-1">1,240</span>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="table-container glass-card">
-        <table mat-table [dataSource]="dataSource" class="premium-table">
-          <ng-container matColumnDef="fecha">
-            <th mat-header-cell *matHeaderCellDef> Fecha </th>
-            <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
-          </ng-container>
+        <div class="overflow-x-auto">
+          <table mat-table [dataSource]="dataSource" class="w-full">
+            <ng-container matColumnDef="fecha">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> Fecha </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-sm font-bold text-slate-600"> {{element.fecha}} </td>
+            </ng-container>
 
-          <ng-container matColumnDef="cliente">
-            <th mat-header-cell *matHeaderCellDef> Cliente </th>
-            <td mat-cell *matCellDef="let element"> 
-              <span class="client-badge">{{element.cliente}}</span>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="cliente">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> Cliente </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4"> 
+                <span class="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-md uppercase border border-indigo-100">{{element.cliente}}</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="linea">
-            <th mat-header-cell *matHeaderCellDef> Línea </th>
-            <td mat-cell *matCellDef="let element"> {{element.linea}} </td>
-          </ng-container>
+            <ng-container matColumnDef="linea">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> Línea </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-sm font-bold text-slate-700"> {{element.linea}} </td>
+            </ng-container>
 
-          <ng-container matColumnDef="tipos">
-            <th mat-header-cell *matHeaderCellDef> Recta | Remalle | Recub. | Espec. </th>
-            <td mat-cell *matCellDef="let element"> 
-              <div class="types-grid">
-                <span>{{element.tipoRecta}}</span>
-                <span>{{element.tipoRemalle}}</span>
-                <span>{{element.tipoRecubierto}}</span>
-                <span>{{element.tipoEspeciales}}</span>
-              </div>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="tipos">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> R | RM | RC | E </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4"> 
+                <div class="flex gap-3 font-mono text-xs text-slate-500 font-bold">
+                  <span class="w-8">{{element.tipoRecta}}</span>
+                  <span class="w-8">{{element.tipoRemalle}}</span>
+                  <span class="w-8">{{element.tipoRecubierto}}</span>
+                  <span class="w-8">{{element.tipoEspeciales}}</span>
+                </div>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="total">
-            <th mat-header-cell *matHeaderCellDef> Total </th>
-            <td mat-cell *matCellDef="let element" class="total-cell"> {{element.total}} </td>
-          </ng-container>
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30 text-center"> Total </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-center">
+                 <span class="text-sm font-black text-indigo-600">{{element.total}}</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="acciones">
-            <th mat-header-cell *matHeaderCellDef> </th>
-            <td mat-cell *matCellDef="let element">
-              <button mat-icon-button color="accent">
-                <svg lucideFileText></svg>
-              </button>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30 text-right"> </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-right">
+                <button class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+                  <svg lucideFileText class="w-5 h-5"></svg>
+                </button>
+              </td>
+            </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="h-14"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="h-16 hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-0"></tr>
+          </table>
+        </div>
+        
+        <div *ngIf="dataSource.length === 0" class="p-20 text-center flex flex-col items-center">
+          <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-200">
+            <svg lucideDatabase class="w-8 h-8"></svg>
+          </div>
+          <h4 class="font-bold text-slate-800">No hay registros de stock</h4>
+          <p class="text-sm text-slate-400 mt-1">Comienza agregando un nuevo registro de clasificación.</p>
+        </div>
       </div>
     </div>
   `,
   styles: [`
-    .page-container { display: flex; flex-direction: column; gap: 1.5rem; padding: 1rem;}
-    .page-header { display: flex; justify-content: space-between; align-items: center; }
-    .title-section h1 { font-size: 2rem; margin: 0; }
-    .subtitle { color: #64748b; margin: 0; }
-    .filter-bar { padding: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-    .search-input { display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 0.5rem 1rem; border-radius: 10px; flex: 1; }
-    .search-input input { background: transparent; border: none; outline: none; width: 100%; color: #1e293b; }
-    .search-input svg { width: 18px; color: #94a3b8; }
-    
-    .form-container { padding: 1.5rem; border: 2px solid rgba(79, 70, 229, 0.2); margin-bottom: 2rem;}
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; align-items: center; }
-    .total-display { display: flex; flex-direction: column; align-items: center; }
-    .total-display label { font-size: 0.7rem; font-weight: 800; color: #64748b; }
-    .total-display span { font-size: 1.5rem; font-weight: 800; color: #4f46e5; }
-    .form-actions { display: flex; justify-content: flex-end; margin-top: 1rem; }
-
-    .table-container { overflow: hidden; padding: 0; }
-    .premium-table { width: 100%; background: transparent !important; }
-    .mat-mdc-header-cell { background: rgba(15, 23, 42, 0.02); color: #475569; font-weight: 600; font-size: 0.85rem; padding: 16px !important; }
-    .mat-mdc-cell { padding: 16px !important; color: #1e293b; font-size: 0.9rem; border-bottom: 1px solid rgba(226, 232, 240, 0.5); }
-    
-    .client-badge { background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; }
-    .types-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-family: monospace; color: #64748b; }
-    .total-cell { font-weight: 800; color: #4f46e5; }
-    
-    .premium-btn { border-radius: 12px !important; padding: 0 20px !important; height: 48px !important; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); font-weight: 600; color: white !important;}
-    .export-btn { border-radius: 12px !important; height: 48px !important; border: 2px solid #4f46e5 !important; color: #4f46e5 !important; font-weight: 600; margin-left: 10px; }
-    .save-btn { background: #059669 !important; color: white !important; font-weight: 600; }
-    .save-btn:disabled { background: #94a3b8 !important; }
+    :host { display: block; }
   `]
 })
 export class StockAgujasListComponent implements OnInit {
@@ -188,6 +216,7 @@ export class StockAgujasListComponent implements OnInit {
   dataSource: StockAgujas[] = [];
   allData: StockAgujas[] = [];
   showForm = false;
+  LucidePlus = LucidePlus;
 
   newRecord: StockAgujas = {
     fecha: new Date().toISOString().split('T')[0],

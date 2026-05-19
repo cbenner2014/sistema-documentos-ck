@@ -8,7 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../../services/api.service';
 import { PdfService } from '../../../services/pdf.service';
 import { Router } from '@angular/router';
-import { LucideCheckCircle, LucideZap, LucideSave } from '@lucide/angular';
+import { LucideCheckCircle, LucideZap, LucideSave, LucideSettings } from '@lucide/angular';
 
 interface InspectionItem {
   name: string;
@@ -19,214 +19,204 @@ interface InspectionItem {
 @Component({
   selector: 'app-inspeccion-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatRadioModule, MatSnackBarModule, LucideSave, LucideCheckCircle, LucideZap],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatRadioModule, MatSnackBarModule, LucideSave, LucideCheckCircle, LucideZap, LucideSettings],
   template: `
-    <div class="page-container">
-      <header class="page-header justify-between">
-        <div class="title-group">
-          <h1 class="gradient-text">Inspección de Máquinas de Confección</h1>
-          <p class="subtitle">IND-MEC-01 | Control de Cabezales, Motores y Mantenimiento</p>
-        </div>
-        <div class="header-actions flex gap-2">
-           <button mat-stroked-button class="autofill-btn" (click)="autofillOK()">
-             <svg lucideZap class="w-4 h-4 mr-2"></svg>
-             Autocompletar TODO (OK)
-           </button>
-           <button mat-flat-button class="save-btn" (click)="save(false)">
-             <svg lucideSave></svg>
-             Guardar
-           </button>
-           <button mat-flat-button class="premium-btn" (click)="save(true)">
-             <svg lucideCheckCircle class="w-4 h-4 mr-2"></svg>
-             Guardar y Exportar PDF
-           </button>
-        </div>
-      </header>
-
-      <div class="header-data glass-card">
-        <div class="data-grid-3">
-           <!-- Column 1 -->
-           <div class="col-section">
-             <div class="field">
-               <label>Fecha</label>
-               <input type="date" [(ngModel)]="model.fecha">
-             </div>
-             <div class="field">
-               <label>Código Máquina</label>
-               <input type="text" placeholder="Ej: RY-203" [(ngModel)]="model.codigoMaquina">
-             </div>
-             <div class="field">
-               <label>Modelo (Cabezal)</label>
-               <input type="text" [(ngModel)]="model.modeloCabezal">
-             </div>
-             <div class="field">
-               <label>Serie Cabezal</label>
-               <input type="text" [(ngModel)]="model.serieCabezal">
-             </div>
-           </div>
-
-           <!-- Column 2 -->
-           <div class="col-section pt-10">
-             <div class="field">
-               <label>Marca/Motor</label>
-               <input type="text" [(ngModel)]="model.marcaMotor">
-             </div>
-             <div class="field">
-               <label>Modelo (Motor)</label>
-               <input type="text" [(ngModel)]="model.modeloMotor">
-             </div>
-             <div class="field">
-               <label>Serie Motor</label>
-               <input type="text" [(ngModel)]="model.serieMotor">
-             </div>
-           </div>
-
-           <!-- Column 3 -->
-           <div class="col-section pt-10">
-             <div class="field">
-               <label>Línea</label>
-               <input type="text" [(ngModel)]="model.linea">
-             </div>
-             <div class="field">
-               <label>Mecánico</label>
-               <input type="text" [(ngModel)]="model.mecanico">
-             </div>
-             <div class="field">
-               <label>Código Mecánico</label>
-               <input type="text" [(ngModel)]="model.codigoMecanico">
-             </div>
-           </div>
+    <div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+      <!-- Sticky Header -->
+      <div class="sticky top-0 z-10 bg-slate-50/80 backdrop-blur-md border-b border-slate-200 -mx-6 px-6 py-4 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Inspección Técnica FO525</h1>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Mantenimiento Preventivo de Cabezales y Motores</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button (click)="autofillOK()" class="px-4 py-2.5 rounded-xl border-2 border-amber-500 text-amber-600 bg-amber-50/50 font-bold text-xs flex items-center gap-2 hover:bg-amber-100 transition-all active:scale-95 shadow-sm shadow-amber-100">
+              <svg lucideZap class="w-4 h-4"></svg>
+              Auto-OK
+            </button>
+            <button (click)="save(false)" class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center gap-2 hover:bg-slate-50 transition-all">
+              <svg lucideSave class="w-4 h-4"></svg>
+              Solo Guardar
+            </button>
+            <button (click)="save(true)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95 shrink-0">
+              <svg lucideCheckCircle class="w-4 h-4"></svg>
+              Guardar y Exportar PDF
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="form-sections">
-        <!-- Section 1 -->
-        <section class="section glass-card">
-          <h3 class="section-title">LIMPIEZA E INSPECCIÓN DE CABEZALES</h3>
-          <div class="checklist">
-            <div class="item-header">
-              <span>Componente</span>
-              <span class="center">OK | D | F</span>
-              <span>Observaciones / # Parte</span>
+      <!-- Main Form Data -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Fecha</label>
+            <input type="date" [(ngModel)]="model.fecha" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Cód. Máquina</label>
+            <input type="text" [(ngModel)]="model.codigoMaquina" placeholder="Ej: RY-203" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono uppercase">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Modelo Cabezal</label>
+            <input type="text" [(ngModel)]="model.modeloCabezal" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Línea / Módulo</label>
+            <input type="text" [(ngModel)]="model.linea" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-bold">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Marca Motor</label>
+            <input type="text" [(ngModel)]="model.marcaMotor" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Modelo Motor</label>
+            <input type="text" [(ngModel)]="model.modeloMotor" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre Mecánico</label>
+            <input type="text" [(ngModel)]="model.mecanico" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Cód. Mecánico</label>
+            <input type="text" [(ngModel)]="model.codigoMecanico" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-12">
+          <!-- CABEZALES -->
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl border border-indigo-100">
+               <svg lucideSettings class="w-5 h-5"></svg>
+               <h3 class="text-sm font-black uppercase tracking-widest">Inspección de Cabezales</h3>
             </div>
-            <div class="row" *ngFor="let item of cabezales">
-              <span class="name">{{item.name}}</span>
-              <mat-radio-group [(ngModel)]="item.status" class="status-group">
-                <mat-radio-button value="OK"></mat-radio-button>
-                <mat-radio-button value="D"></mat-radio-button>
-                <mat-radio-button value="F"></mat-radio-button>
-              </mat-radio-group>
-              <input type="text" [(ngModel)]="item.obs" class="obs-field">
+            <div class="bg-slate-50/50 rounded-2xl border border-slate-100 overflow-hidden">
+              <table class="w-full text-xs">
+                <thead class="bg-slate-100/50 text-slate-400 font-black uppercase tracking-widest">
+                  <tr>
+                    <th class="px-4 py-3 text-left">Componente</th>
+                    <th class="px-4 py-3 text-center w-32">Estado</th>
+                    <th class="px-4 py-3 text-left">Observaciones</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr *ngFor="let item of cabezales" class="hover:bg-white transition-colors">
+                    <td class="px-4 py-3 font-bold text-slate-700">{{item.name}}</td>
+                    <td class="px-4 py-3 text-center">
+                       <div class="flex items-center justify-center gap-1">
+                         <button (click)="item.status = 'OK'" [class.bg-emerald-500]="item.status === 'OK'" [class.text-white]="item.status === 'OK'" class="w-7 h-7 rounded-md border border-slate-200 flex items-center justify-center text-[10px] font-black transition-all">OK</button>
+                         <button (click)="item.status = 'D'" [class.bg-amber-500]="item.status === 'D'" [class.text-white]="item.status === 'D'" class="w-7 h-7 rounded-md border border-slate-200 flex items-center justify-center text-[10px] font-black transition-all">D</button>
+                         <button (click)="item.status = 'F'" [class.bg-red-500]="item.status === 'F'" [class.text-white]="item.status === 'F'" class="w-7 h-7 rounded-md border border-slate-200 flex items-center justify-center text-[10px] font-black transition-all">F</button>
+                       </div>
+                    </td>
+                    <td class="px-4 py-3">
+                      <input type="text" [(ngModel)]="item.obs" placeholder="Parte #" class="w-full bg-white border border-slate-100 rounded-lg px-2 py-1.5 focus:border-indigo-400 outline-none transition-all italic text-slate-500">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-        </section>
 
-        <!-- Section 2 -->
-        <section class="section glass-card mt-6">
-          <h3 class="section-title">REAJUSTE Y REVISIÓN DE TORNILLOS (Detección de Hollín)</h3>
-          <div class="checklist">
-            <div class="row">
-              <span class="name">Tornillos</span>
-              <mat-radio-group [(ngModel)]="model.tornillosStatus" class="status-group">
-                <mat-radio-button value="OK"></mat-radio-button>
-                <mat-radio-button value="D"></mat-radio-button>
-                <mat-radio-button value="F"></mat-radio-button>
-              </mat-radio-group>
-              <input type="text" class="obs-field" [(ngModel)]="model.tornillosObs" placeholder="Observaciones...">
+          <!-- ACEITE Y MOTORES -->
+          <div class="space-y-8">
+            <!-- Section ACEITE -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-700 rounded-xl border border-blue-100">
+                 <svg lucideZap class="w-5 h-5"></svg>
+                 <h3 class="text-sm font-black uppercase tracking-widest">Lubricación y Mueble</h3>
+              </div>
+              <div class="bg-slate-50/50 rounded-2xl border border-slate-100 overflow-hidden">
+                <table class="w-full text-xs">
+                  <tbody class="divide-y divide-slate-100">
+                    <tr *ngFor="let item of aceite" class="hover:bg-white transition-colors">
+                      <td class="px-4 py-3 font-bold text-slate-700">{{item.name}}</td>
+                      <td class="px-4 py-3 text-center w-32">
+                         <div class="flex items-center justify-center gap-1">
+                           <button (click)="item.status = 'OK'" [class.bg-emerald-500]="item.status === 'OK'" [class.text-white]="item.status === 'OK'" class="w-7 h-7 rounded-md border border-slate-200 flex items-center justify-center text-[10px] font-black transition-all">OK</button>
+                           <button (click)="item.status = 'D'" [class.bg-amber-500]="item.status === 'D'" [class.text-white]="item.status === 'D'" class="w-7 h-7 rounded-md border border-slate-200 flex items-center justify-center text-[10px] font-black transition-all">D</button>
+                           <button (click)="item.status = 'F'" [class.bg-red-500]="item.status === 'F'" [class.text-white]="item.status === 'F'" class="w-7 h-7 rounded-md border border-slate-200 flex items-center justify-center text-[10px] font-black transition-all">F</button>
+                         </div>
+                      </td>
+                      <td class="px-4 py-3">
+                        <input type="text" [(ngModel)]="item.obs" class="w-full bg-white border border-slate-100 rounded-lg px-2 py-1.5 focus:border-indigo-400 outline-none transition-all italic text-slate-500">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Section MOTORES -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 px-4 py-3 bg-slate-800 text-white rounded-xl">
+                 <svg lucideZap class="w-5 h-5"></svg>
+                 <h3 class="text-sm font-black uppercase tracking-widest tracking-widest">Sistema Eléctrico / Motor</h3>
+              </div>
+              <div class="bg-slate-50/50 rounded-2xl border border-slate-100 overflow-hidden">
+                <table class="w-full text-xs">
+                  <tbody class="divide-y divide-slate-100">
+                    <tr *ngFor="let item of motores" class="hover:bg-white transition-colors">
+                      <td class="px-4 py-3 font-bold text-slate-700">{{item.name}}</td>
+                      <td class="px-4 py-3 text-center w-32">
+                         <div class="flex items-center justify-center gap-1">
+                           <button (click)="item.status = 'OK'" [class.bg-emerald-500]="item.status === 'OK'" [class.text-white]="item.status === 'OK'" class="w-7 h-7 rounded-md border border-slate-200 flex items-center justify-center text-[10px] font-black transition-all">OK</button>
+                           <button (click)="item.status = 'D'" [class.bg-amber-500]="item.status === 'D'" [class.text-white]="item.status === 'D'" class="w-7 h-7 rounded-md border border-slate-200 flex items-center justify-center text-[10px] font-black transition-all">D</button>
+                           <button (click)="item.status = 'F'" [class.bg-red-500]="item.status === 'F'" [class.text-white]="item.status === 'F'" class="w-7 h-7 rounded-md border border-slate-200 flex items-center justify-center text-[10px] font-black transition-all">F</button>
+                         </div>
+                      </td>
+                      <td class="px-4 py-3">
+                        <input type="text" [(ngModel)]="item.obs" class="w-full bg-white border border-slate-100 rounded-lg px-2 py-1.5 focus:border-indigo-400 outline-none transition-all italic text-slate-500">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        <!-- Section 3 -->
-        <section class="section glass-card mt-6">
-          <h3 class="section-title">FILTRO Y CAMBIO DE ACEITE (Fugas y Lubricación)</h3>
-          <div class="checklist">
-            <div class="row" *ngFor="let item of aceite">
-              <span class="name">{{item.name}}</span>
-              <mat-radio-group [(ngModel)]="item.status" class="status-group">
-                <mat-radio-button value="OK"></mat-radio-button>
-                <mat-radio-button value="D"></mat-radio-button>
-                <mat-radio-button value="F"></mat-radio-button>
-              </mat-radio-group>
-              <input type="text" [(ngModel)]="item.obs" class="obs-field">
+        <!-- Footer Comments -->
+        <div class="pt-12 border-t border-slate-100">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+              <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                <svg lucideFileText class="w-4 h-4"></svg>
+                Observaciones Finales
+              </label>
+              <textarea [(ngModel)]="model.observaciones" rows="4" placeholder="Detalles técnicos adicionales..." class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"></textarea>
+            </div>
+            <div class="space-y-6">
+              <div class="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100">
+                 <h4 class="text-xs font-black text-indigo-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                   <svg lucideCheckCircle class="w-4 h-4"></svg>
+                   Prueba de Funcionamiento
+                 </h4>
+                 <div class="flex items-center gap-4">
+                    <button 
+                      (click)="model.pruebaCostura = !model.pruebaCostura" 
+                      [class.bg-emerald-600]="model.pruebaCostura"
+                      [class.border-emerald-600]="model.pruebaCostura"
+                      class="flex-1 py-3 rounded-xl border-2 font-black text-xs uppercase tracking-widest transition-all"
+                      [ngClass]="model.pruebaCostura ? 'text-white' : 'border-slate-200 text-slate-400'"
+                    >
+                      Conforme
+                    </button>
+                    <div class="flex-1 space-y-1.5">
+                      <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Revisado Por</label>
+                      <input type="text" [(ngModel)]="model.revisadoPor" placeholder="Firma / Nombre" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-bold">
+                    </div>
+                 </div>
+              </div>
+              <p class="text-[10px] text-slate-400 italic text-center">Este documento tiene carácter de declaración jurada técnica.</p>
             </div>
           </div>
-        </section>
-
-        <!-- Section 4 -->
-        <section class="section glass-card mt-6">
-          <h3 class="section-title">LIMPIEZA DE MOTORES</h3>
-          <div class="checklist">
-            <div class="row" *ngFor="let item of motores">
-              <span class="name">{{item.name}}</span>
-              <mat-radio-group [(ngModel)]="item.status" class="status-group">
-                <mat-radio-button value="OK"></mat-radio-button>
-                <mat-radio-button value="D"></mat-radio-button>
-                <mat-radio-button value="F"></mat-radio-button>
-              </mat-radio-group>
-              <input type="text" [(ngModel)]="item.obs" class="obs-field">
-            </div>
-          </div>
-        </section>
-
-        <!-- Observations Area -->
-        <div class="bottom-area mt-6">
-           <div class="glass-card full-width p-6">
-              <h4>COMENTARIOS Y OBSERVACIONES</h4>
-              <textarea rows="4" placeholder="Escriba comentarios adicionales..." [(ngModel)]="model.observaciones"></textarea>
-           </div>
-           
-           <div class="grid-2-cols mt-6">
-             <div class="glass-card p-6">
-                <h4>PRUEBA DE COSTURA</h4>
-                <div class="check-box-wrapper">
-                  <mat-checkbox [(ngModel)]="model.pruebaCostura">Conforme</mat-checkbox>
-                </div>
-             </div>
-             <div class="glass-card p-6">
-                <h4>REVISADO POR</h4>
-                <input type="text" class="bottom-input" placeholder="Nombre del revisor" [(ngModel)]="model.revisadoPor">
-             </div>
-           </div>
         </div>
       </div>
     </div>
   `,
   styles: [`
-    .page-container { display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; max-height: calc(100vh - 40px); padding: 1.5rem; }
-    .header-data { padding: 1.5rem; }
-    .data-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
-    .col-section { display: flex; flex-direction: column; gap: 1rem; }
-    .pt-10 { padding-top: 38px; } /* To align with the first row after 'Fecha' */
-    .field { display: flex; flex-direction: column; gap: 4px; }
-    .field label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
-    .field input { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 12px; font-size: 0.9rem; }
-    
-    .section { padding: 1.5rem; }
-    .section-title { font-size: 0.95rem; font-weight: 800; color: #1e293b; margin-bottom: 1.2rem; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border-left: 5px solid #4f46e5; }
-    
-    .item-header { display: grid; grid-template-columns: 250px 140px 1fr; gap: 1.5rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 10px; font-size: 0.75rem; font-weight: 800; color: #94a3b8; }
-    .row { display: grid; grid-template-columns: 250px 140px 1fr; gap: 1.5rem; align-items: center; border-bottom: 1px solid #f8fafc; padding: 8px 0; }
-    .name { font-size: 0.9rem; color: #334155; font-weight: 500; }
-    .status-group { display: flex; justify-content: space-around; }
-    .obs-field { width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 10px; font-size: 0.85rem; }
-    .obs-field:focus { border-color: #4f46e5; outline: none; }
-    
-    .grid-2-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    .p-6 { padding: 1.5rem; }
-    h4 { font-size: 0.8rem; font-weight: 800; color: #64748b; margin: 0 0 12px; }
-    textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; font-size: 0.9rem; resize: none; background: #fcfdfe; }
-    .bottom-input { width: 100%; border-bottom: 2px solid #e2e8f0; border-left: none; border-right: none; border-top: none; padding: 8px 0; font-size: 1rem; color: #1e293b; font-weight: 600; }
-    .check-box-wrapper { padding: 10px; border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; }
-
-    .mt-6 { margin-top: 1.5rem; }
-    .save-btn { background: #64748b !important; color: white !important; border-radius: 12px !important; height: 50px !important; padding: 0 20px !important; font-weight: 600; }
-    .premium-btn { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important; color: white !important; border-radius: 12px !important; height: 50px !important; padding: 0 25px !important; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4); font-weight: 600; }
-    .autofill-btn { border: 2px solid #eab308 !important; color: #a16207 !important; border-radius: 12px !important; height: 50px !important; font-weight: 700; background: #fefce8 !important; }
-    .save-btn svg, .premium-btn svg { width: 22px; height: 22px; margin-right: 10px; }
-    .center { text-align: center; }
-    .flex { display: flex; }
-    .gap-2 { gap: 0.5rem; }
+    :host { display: block; }
   `]
 })
 export class InspeccionFormComponent {

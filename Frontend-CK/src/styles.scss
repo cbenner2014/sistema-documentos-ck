@@ -1,5 +1,9 @@
 @use '@angular/material' as mat;
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @include mat.core();
 
 $cotton-knit-primary: mat.m2-define-palette(mat.$m2-indigo-palette);

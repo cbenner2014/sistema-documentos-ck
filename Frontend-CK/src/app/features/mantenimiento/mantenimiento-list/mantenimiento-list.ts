@@ -33,164 +33,186 @@ import { ApiService } from '../../../services/api.service';
     LucideTrash2
   ],
   template: `
-    <div class="page-container">
-      <div class="page-header">
-        <div class="title-section">
-          <h1 class="gradient-text">Registro de Mantenimiento Correctivo</h1>
-          <p class="subtitle">Gestión de incidencias técnicas en líneas de confección</p>
+    <div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <!-- Page Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Registro de Mantenimiento Correctivo</h1>
+          <p class="text-slate-500 font-medium mt-1 tracking-tight">Gestión de incidencias técnicas en líneas de confección (FO-026)</p>
         </div>
-        <div class="actions">
-          <button mat-stroked-button class="magic-btn" (click)="generateMagicData()">
-            <svg lucideZap class="w-4 h-4 mr-2"></svg>
-            Generación Semanal (6 días - 30 reg.)
+        <div class="flex items-center gap-3">
+          <button 
+            (click)="generateMagicData()"
+            class="px-5 py-3 rounded-xl border-2 border-amber-500 text-amber-600 bg-amber-50/50 font-bold flex items-center gap-2 hover:bg-amber-100 transition-all active:scale-95 shrink-0 shadow-sm shadow-amber-100"
+          >
+            <svg lucideZap class="w-4 h-4"></svg>
+            Generación Semanal
           </button>
-          <button mat-flat-button class="premium-btn" (click)="toggleForm()">
-            <svg lucidePlus></svg>
+          <button 
+            (click)="toggleForm()"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95 shrink-0"
+          >
+            <svg lucidePlus class="w-5 h-5 transition-transform" [class.rotate-45]="showForm"></svg>
             {{ showForm ? 'Cerrar Formulario' : 'Nuevo Registro' }}
           </button>
         </div>
       </div>
 
-      <!-- Quick Stats -->
-      <div class="stats-row">
-        <div class="mini-card glass-card">
-          <svg lucideWrench class="icon orange"></svg>
-          <div class="info">
-            <span class="label">Total Reparaciones</span>
-            <span class="val">{{ allData.length }}</span>
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 group">
+          <div class="p-3 bg-orange-50 text-orange-500 rounded-xl group-hover:bg-orange-500 group-hover:text-white transition-colors">
+            <svg lucideWrench class="w-6 h-6"></svg>
+          </div>
+          <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Total Reparaciones</p>
+            <p class="text-2xl font-black text-slate-900 mt-1">{{ allData.length }}</p>
           </div>
         </div>
-        <div class="mini-card glass-card">
-          <svg lucideHistory class="icon blue"></svg>
-          <div class="info">
-            <span class="label">Reportes Generados</span>
-            <span class="val">{{ groupedHistory.length }}</span>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 group">
+          <div class="p-3 bg-blue-50 text-blue-500 rounded-xl group-hover:bg-blue-500 group-hover:text-white transition-colors">
+            <svg lucideHistory class="w-6 h-6"></svg>
+          </div>
+          <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Reportes FO-026</p>
+            <p class="text-2xl font-black text-slate-900 mt-1">{{ groupedHistory.length }}</p>
           </div>
         </div>
       </div>
 
-      <!-- New Record Form -->
-      <div class="form-container glass-card mb-6" *ngIf="showForm">
-        <h3 class="flex items-center gap-2">
-          <svg lucidePlus class="w-5 h-5 text-indigo-600"></svg>
-          Llenado de Registro FO-026
-        </h3>
-        <div class="form-grid">
-           <mat-form-field appearance="outline">
-             <mat-label>Fecha</mat-label>
-             <input matInput type="date" [(ngModel)]="newRecord.fecha">
-           </mat-form-field>
-           
-           <mat-form-field appearance="outline">
-             <mat-label>Problema / Solución (Cod.)</mat-label>
-             <mat-select [(ngModel)]="newRecord.catalogoErrorId">
-               <mat-option *ngFor="let item of catalogos" [value]="item.id">
-                 {{ item.id }} - {{ item.problema }}
-               </mat-option>
-             </mat-select>
-           </mat-form-field>
-
-           <mat-form-field appearance="outline">
-             <mat-label>Cód. Máquina</mat-label>
-             <input matInput placeholder="Ej: RB-029" [(ngModel)]="newRecord.maquinaId">
-           </mat-form-field>
-
-           <mat-form-field appearance="outline">
-             <mat-label>Hra Parada</mat-label>
-             <input matInput type="time" [(ngModel)]="newRecord.horaParada">
-           </mat-form-field>
-
-           <mat-form-field appearance="outline">
-             <mat-label>Hra Término</mat-label>
-             <input matInput type="time" [(ngModel)]="newRecord.horaTermino">
-           </mat-form-field>
+      <!-- New Record Form (Collapsible) -->
+      <div *ngIf="showForm" class="bg-white rounded-2xl border-2 border-indigo-100 shadow-xl shadow-indigo-50/50 overflow-hidden animate-in zoom-in-95 duration-300">
+        <div class="p-6 border-b border-indigo-50 bg-indigo-50/30 flex items-center justify-between">
+          <h3 class="font-bold text-indigo-900 flex items-center gap-2">
+            <svg lucidePlus class="w-5 h-5"></svg>
+            Llenado de Registro de Mantenimiento (FO-026)
+          </h3>
+          <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Planta 01 - CottonKnit</span>
         </div>
-        <div class="form-actions">
-           <button mat-button (click)="toggleForm()" class="mr-2">Cancelar</button>
-           <button mat-flat-button class="save-btn" (click)="addRecord()" [disabled]="!isFormValid()">
-              <svg lucideCheckCircle class="w-4 h-4 mr-2"></svg>
-              Guardar en Base de Datos
-           </button>
-        </div>
-      </div>
-
-      <!-- HISTORIAL DE REPORTES GENERADOS -->
-      <div class="section-title mb-4">
-        <h2 class="flex items-center gap-2 text-slate-700">
-          <svg lucideHistory class="w-5 h-5"></svg>
-          Historial de Documentos FO-026
-        </h2>
-      </div>
-
-      <div class="table-container glass-card mb-8">
-        <table mat-table [dataSource]="groupedHistory" class="premium-table">
-          <ng-container matColumnDef="fecha">
-            <th mat-header-cell *matHeaderCellDef> Fecha de Creación </th>
-            <td mat-cell *matCellDef="let element"> {{element.fechaCreacion}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="periodo">
-            <th mat-header-cell *matHeaderCellDef> Periodo de Reporte </th>
-            <td mat-cell *matCellDef="let element"> 
-               <span class="badge blue">{{element.fechaInicio}} a {{element.fechaFin}}</span>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="registros">
-            <th mat-header-cell *matHeaderCellDef> Total Filas </th>
-            <td mat-cell *matCellDef="let element"> {{element.items.length}} registros </td>
-          </ng-container>
-
-          <ng-container matColumnDef="acciones">
-            <th mat-header-cell *matHeaderCellDef> Acciones </th>
-            <td mat-cell *matCellDef="let element"> 
-              <div class="flex items-center gap-2">
-                <button mat-icon-button class="pdf-row-btn" (click)="downloadBatch(element)" title="Descargar PDF">
-                  <svg lucideFileText class="w-6 h-6 text-red-500"></svg>
-                </button>
-                <button mat-icon-button class="delete-row-btn" (click)="deleteBatch(element)" title="Eliminar del Historial">
-                  <svg lucideTrash2 class="w-5 h-5 text-slate-400 hover:text-red-600"></svg>
-                </button>
-              </div>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="['fecha', 'periodo', 'registros', 'acciones']"></tr>
-          <tr mat-row *matRowDef="let row; columns: ['fecha', 'periodo', 'registros', 'acciones'];"></tr>
-        </table>
         
-        <div *ngIf="groupedHistory.length === 0" class="empty-state p-12 text-center">
-           <svg lucideHistory class="w-12 h-12 text-slate-200 mx-auto mb-4"></svg>
-           <p class="text-slate-400 italic font-medium">No hay reportes generados aún en el historial.</p>
+        <div class="p-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Fecha</label>
+              <input type="date" [(ngModel)]="newRecord.fecha" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+            </div>
+
+            <div class="space-y-1.5 lg:col-span-2">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Problema / Solución</label>
+              <select [(ngModel)]="newRecord.catalogoErrorId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all appearance-none">
+                <option [ngValue]="null">Seleccione un código...</option>
+                <option *ngFor="let item of catalogos" [value]="item.id">
+                  {{ item.id }} - {{ item.problema }}
+                </option>
+              </select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Cód. Máquina</label>
+              <input type="text" [(ngModel)]="newRecord.maquinaId" placeholder="Ej: RB-029" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Inicio</label>
+                <input type="time" [(ngModel)]="newRecord.horaParada" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Término</label>
+                <input type="time" [(ngModel)]="newRecord.horaTermino" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-8 gap-3">
+            <button (click)="toggleForm()" class="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors">Cancelar</button>
+            <button 
+              (click)="addRecord()" 
+              [disabled]="!isFormValid()"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-emerald-200 transition-all disabled:opacity-50 disabled:shadow-none active:scale-95"
+            >
+              <svg lucideCheckCircle class="w-5 h-5"></svg>
+              Guardar Reporte Técnico
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/20">
+          <h2 class="font-bold text-slate-800 flex items-center gap-2 text-lg">
+            <svg lucideHistory class="w-5 h-5 text-indigo-500"></svg>
+            Historial de Documentos FO-026
+          </h2>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ groupedHistory.length }} reportes generados</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table mat-table [dataSource]="groupedHistory" class="w-full">
+            <ng-container matColumnDef="fecha">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> Fecha de Creación </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-sm font-bold text-slate-600"> {{element.fechaCreacion}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="periodo">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30"> Periodo de Reporte </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4"> 
+                 <span class="bg-blue-50 text-blue-700 text-[10px] font-black px-2.5 py-1 rounded-md border border-blue-100 uppercase tracking-tighter">
+                   {{element.fechaInicio}} <span class="mx-1 text-blue-300">→</span> {{element.fechaFin}}
+                 </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="registros">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30 text-center"> Total Filas </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-center">
+                 <span class="text-xs font-black text-slate-700 bg-slate-100 px-2 py-1 rounded">{{element.items.length}} registros</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30 text-right"> Acciones </th>
+              <td mat-cell *matCellDef="let element" class="px-6 py-4 text-right"> 
+                <div class="flex justify-end gap-1">
+                  <button (click)="downloadBatch(element)" class="p-2 hover:bg-red-50 text-red-500 rounded-lg transition-colors group" title="Descargar PDF">
+                    <svg lucideFileText class="w-5 h-5 group-hover:scale-110 transition-transform"></svg>
+                  </button>
+                  <button (click)="deleteBatch(element)" class="p-2 hover:bg-slate-100 text-slate-300 hover:text-red-600 rounded-lg transition-colors" title="Eliminar">
+                    <svg lucideTrash2 class="w-4 h-4"></svg>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['fecha', 'periodo', 'registros', 'acciones']" class="h-14"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['fecha', 'periodo', 'registros', 'acciones'];" class="h-16 hover:bg-slate-50/80 transition-colors border-b border-slate-100 last:border-0"></tr>
+          </table>
+        </div>
+        
+        <div *ngIf="groupedHistory.length === 0" class="p-24 text-center flex flex-col items-center">
+           <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-200">
+             <svg lucideHistory class="w-8 h-8"></svg>
+           </div>
+           <h4 class="font-bold text-slate-800 tracking-tight">No hay reportes generados aún</h4>
+           <p class="text-sm text-slate-400 mt-1 font-medium">Los reportes semanales aparecerán aquí después de la generación.</p>
         </div>
       </div>
     </div>
   `,
   styles: [`
-    .page-container { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .stats-row { display: flex; gap: 1rem; margin-bottom: 2rem; }
-    .mini-card { flex: 1; padding: 1.2rem; display: flex; align-items: center; gap: 1rem; }
-    .icon.orange { color: #f59e0b; } .icon.blue { color: #3b82f6; }
-    .mini-card .info .label { font-size: 0.75rem; color: #64748b; display: block; }
-    .mini-card .info .val { font-size: 1.2rem; font-weight: 700; color: #1e293b; }
-    
-    .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05); }
-    .table-container { overflow: hidden; }
-    .premium-table { width: 100%; background: transparent !important; }
-    
-    .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-    .badge.blue { background: #e0f2fe; color: #0369a1; }
-    
-    .pdf-row-btn:hover { background: rgba(239, 68, 68, 0.1); transform: scale(1.1); transition: 0.2s; }
-    .delete-row-btn:hover { background: rgba(239, 68, 68, 0.1); transition: 0.2s; }
-    
-    .premium-btn { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important; color: white !important; border-radius: 12px !important; height: 50px !important; padding: 0 25px !important; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4); font-weight: 600; }
-    .magic-btn { border: 2px solid #eab308 !important; color: #a16207 !important; border-radius: 12px !important; height: 50px !important; font-weight: 700; background: #fefce8 !important; margin-right: 10px; }
-    .save-btn { background: #059669 !important; color: white !important; border-radius: 8px !important; font-weight: 600; }
+    :host { display: block; }
   `]
 })
 export class MantenimientoListComponent implements OnInit {
+  LucidePlus = LucidePlus;
+  LucideZap = LucideZap;
+  LucideWrench = LucideWrench;
+  LucideHistory = LucideHistory;
+  LucideTrash2 = LucideTrash2;
+  LucideFileText = LucideFileText;
+  LucideCheckCircle = LucideCheckCircle;
+
   allData: any[] = [];
   groupedHistory: any[] = [];
   catalogos: CatalogoError[] = [];
