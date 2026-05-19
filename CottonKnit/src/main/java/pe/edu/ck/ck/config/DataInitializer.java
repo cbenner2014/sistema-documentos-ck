@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import pe.edu.ck.ck.entity.Usuario;
 import pe.edu.ck.ck.repositories.MaquinaRepository;
 import pe.edu.ck.ck.repositories.UsuarioRepository;
+import pe.edu.ck.ck.repositories.CatalogoErrorRepository;
 import javax.sql.DataSource;
 
 @Component
@@ -18,6 +19,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CatalogoErrorRepository catalogoErrorRepository;
 
     @Autowired
     private DataSource dataSource;
@@ -47,12 +51,14 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Usuario 'mecanico' creado exitosamente.");
         }
 
-        // Si no hay máquinas registradas en la base de datos, inicializamos el resto con import.sql
-        if (maquinaRepository.count() == 0) {
-            System.out.println("Base de datos de máquinas vacía. Iniciando carga de import.sql...");
+        // Si la base de datos está parcialmente vacía (falta el catálogo o las máquinas), corremos import.sql
+        if (maquinaRepository.count() == 0 || catalogoErrorRepository.count() == 0) {
+            System.out.println("Base de datos parcialmente vacía (máquinas: " + maquinaRepository.count() 
+                               + ", catálogo errores: " + catalogoErrorRepository.count() 
+                               + "). Iniciando carga de import.sql con continueOnError=true...");
             try {
                 ResourceDatabasePopulator populator = new ResourceDatabasePopulator(
-                    true, // continueOnError = true para ignorar duplicados si los usuarios ya existen en SQL
+                    true, // continueOnError = true (ignora duplicados si ya existen algunos)
                     false, // ignoreFailedDrops
                     "UTF-8",
                     new ClassPathResource("import.sql")
@@ -63,7 +69,7 @@ public class DataInitializer implements CommandLineRunner {
                 System.err.println("Error al cargar import.sql: " + e.getMessage());
             }
         } else {
-            System.out.println("La base de datos de máquinas ya contiene registros. Omitiendo import.sql.");
+            System.out.println("La base de datos ya contiene máquinas y catálogo de errores. Omitiendo import.sql.");
         }
     }
 }
