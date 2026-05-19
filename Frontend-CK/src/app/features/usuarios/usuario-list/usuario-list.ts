@@ -160,7 +160,7 @@ interface User {
           </div>
 
           <!-- Modal Body -->
-          <form (ngSubmit)="saveUser()" class="p-6 space-y-5">
+          <form (ngSubmit)="saveUser()" class="p-6 space-y-5" autocomplete="off">
             <!-- Username Input -->
             <div class="space-y-2">
               <label for="modal-username" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Usuario (Username)</label>
@@ -171,6 +171,7 @@ interface User {
                 name="username" 
                 required 
                 [disabled]="isEditing && formData.username === 'admin'"
+                autocomplete="one-time-code"
                 class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm font-semibold"
                 placeholder="Ej: jperez"
               >
@@ -185,6 +186,7 @@ interface User {
                 [(ngModel)]="formData.nombreCompleto" 
                 name="nombreCompleto" 
                 required 
+                autocomplete="one-time-code"
                 class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm font-semibold"
                 placeholder="Ej: Juan Perez"
               >
@@ -201,6 +203,7 @@ interface User {
                 [(ngModel)]="formData.password" 
                 name="password" 
                 [required]="!isEditing"
+                autocomplete="new-password"
                 class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm font-semibold"
                 placeholder="••••••••"
               >
