@@ -239,16 +239,57 @@ export class PdfService {
 
   generateStockPDF(data: any[]) {
     const doc = new jsPDF('p', 'mm', 'a4');
+    const margin = 10;
+    const pageWidth = 210;
+    const tableWidth = pageWidth - (margin * 2);
+
     doc.setFont("helvetica", "bold");
-    doc.text('REPORTE DE STOCK DE AGUJAS', 105, 15, { align: 'center' });
+    doc.setFontSize(14);
+    doc.setTextColor(30, 41, 59); // slate-800
+    doc.text('REPORTE DE STOCK DE AGUJAS', 105, 18, { align: 'center' });
     
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 116, 139); // slate-500
+    doc.text('COTTON KNIT - Control de Clasificación de Agujas', 105, 23, { align: 'center' });
+
     autoTable(doc, {
-      startY: 25,
-      head: [['Cod. Aguja', 'Marca', 'Modelo', 'Stock Actual']],
-      body: data.map(d => [d.codigoAguja, d.marca, d.modelo, d.cantidad]),
-      theme: 'striped'
+      startY: 28,
+      margin: { left: margin, right: margin },
+      head: [['Fecha', 'Cliente', 'Línea', 'Recta', 'Remalle', 'Recubierto', 'Especiales', 'Total']],
+      body: data.map(d => [
+        d.fecha, 
+        d.cliente?.toUpperCase() || '', 
+        d.linea || '', 
+        d.tipoRecta ?? 0, 
+        d.tipoRemalle ?? 0, 
+        d.tipoRecubierto ?? 0, 
+        d.tipoEspeciales ?? 0, 
+        d.total ?? 0
+      ]),
+      theme: 'grid',
+      styles: { fontSize: 8.5, cellPadding: 2, halign: 'center', valign: 'middle' },
+      headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255], fontStyle: 'bold', lineWidth: 0.1 },
+      columnStyles: {
+        0: { cellWidth: 22 },
+        1: { cellWidth: 35, halign: 'left' },
+        2: { cellWidth: 35, halign: 'left' },
+        3: { cellWidth: 15 },
+        4: { cellWidth: 15 },
+        5: { cellWidth: 18 },
+        6: { cellWidth: 18 },
+        7: { cellWidth: 15, fontStyle: 'bold', textColor: [79, 70, 229] }
+      }
     });
     
+    const finalY = (doc as any).lastAutoTable.finalY + 10;
+    if (finalY < 280) {
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(148, 163, 184); // slate-400
+      doc.text('FO-027 / CLASIFICACIÓN DE AGUJAS', 195, 287, { align: 'right' });
+    }
+
     doc.save('Reporte_Stock_Agujas.pdf');
   }
 }
