@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "outputDirectory": "dist/Frontend-CK/browser",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
